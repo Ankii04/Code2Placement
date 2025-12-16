@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Use environment variable for API URL, fallback to relative path for development
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+// Hardcoded API URL for Render backend
+const API_BASE_URL = 'https://code2placement.onrender.com/api';
 
 const api = axios.create({
     baseURL: API_BASE_URL,
