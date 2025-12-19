@@ -29,11 +29,11 @@ const CodeEditor = ({ question, onSubmit }) => {
     // Default code templates
     function getDefaultCode(lang) {
         const templates = {
-            javascript: `function solution(input) {\n    // Write your code here\n    \n    return result;\n}\n\n// Test your function\nconsole.log(solution(input));`,
-            python: `def solution(input):\n    # Write your code here\n    \n    return result\n\n# Test your function\nprint(solution(input))`,
-            java: `public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n        \n    }\n}`,
-            cpp: `#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    // Write your code here\n    \n    return 0;\n}`,
-            c: `#include <stdio.h>\n\nint main() {\n    // Write your code here\n    \n    return 0;\n}`
+            javascript: `const fs = require('fs');\nconst input = fs.readFileSync(0, 'utf8').trim();\n\nfunction solution(input) {\n    // Write your code here\n    return input;\n}\n\nconsole.log(solution(input));`,
+            python: `import sys\n\ndef solution(data):\n    # Write your code here\n    return data\n\nif __name__ == "__main__":\n    input_data = sys.stdin.read().strip()\n    print(solution(input_data))`,
+            java: `import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        if (sc.hasNextInt()) {\n            int n = sc.nextInt();\n            int[] arr = new int[n];\n            for (int i = 0; i < n; i++) {\n                arr[i] = sc.nextInt();\n            }\n            // Solve here\n            int max = arr[0];\n            for (int i = 1; i < n; i++) {\n                if (arr[i] > max) max = arr[i];\n            }\n            System.out.println(max);\n        }\n    }\n}`,
+            cpp: `#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int n;\n    if (!(cin >> n)) return 0;\n    vector<int> arr(n);\n    for (int i = 0; i < n; i++) {\n        cin >> arr[i];\n    }\n    \n    int maxVal = arr[0];\n    for (int i = 1; i < n; i++) {\n        if (arr[i] > maxVal) maxVal = arr[i];\n    }\n    cout << maxVal << endl;\n    \n    return 0;\n}`,
+            c: `#include <stdio.h>\n\nint main() {\n    int n;\n    if (scanf("%d", &n) != 1) return 0;\n    int arr[n];\n    for (int i = 0; i < n; i++) {\n        scanf("%d", &arr[i]);\n    }\n    \n    int max = arr[0];\n    for (int i = 1; i < n; i++) {\n        if (arr[i] > max) max = arr[i];\n    }\n    printf("%d\\n", max);\n    \n    return 0;\n}`
         };
         return templates[lang] || templates.javascript;
     }

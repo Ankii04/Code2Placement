@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from '../config/db.js';
 import User from '../models/User.js';
+import UserProgress from '../models/UserProgress.js';
 import { protect } from '../middleware/auth.middleware.js';
 
 dotenv.config();
@@ -89,11 +90,12 @@ app.post('/github-connect', protect, async (req, res) => {
 app.get('/stats', protect, async (req, res) => {
     try {
         const user = await User.findById(req.user._id);
+        const userProgress = await UserProgress.findOne({ user: req.user._id });
 
         const stats = {
             topicsCompleted: user.progress?.topicsCompleted?.length || 0,
-            questionsCompleted: user.progress?.questionsCompleted?.length || 0,
-            totalScore: user.progress?.totalScore || 0,
+            questionsCompleted: userProgress?.totalSolved || user.progress?.questionsCompleted?.length || 0,
+            totalScore: userProgress?.totalSolved ? (userProgress.totalSolved * 10) : (user.progress?.totalScore || 0),
             badges: user.badges?.length || 0
         };
 

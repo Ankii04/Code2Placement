@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { getQuestions, getTopics } from '../services/userService';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import api from '../services/api';
 import './Questions.css';
 
 const QuestionsList = () => {
@@ -70,15 +70,14 @@ const QuestionsList = () => {
     const loadProgress = async () => {
         if (isAuthenticated) {
             try {
-                const { data } = await axios.get(
-                    `${import.meta.env.VITE_API_URL}/progress`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                        }
-                    }
-                );
-                setCompletedQuestions(new Set(data.completedQuestions || []));
+                const response = await api.get('/progress');
+                const data = response.data;
+                // Extract question IDs safely as strings
+                const solvedIds = data.solvedQuestions?.map(sq => {
+                    const id = sq.question?._id || sq.question;
+                    return id ? id.toString() : '';
+                }).filter(Boolean) || [];
+                setCompletedQuestions(new Set(solvedIds));
             } catch (err) {
                 console.error('Failed to load progress:', err);
             }
@@ -93,12 +92,11 @@ const QuestionsList = () => {
     };
 
     const getDifficultyColor = (difficulty) => {
-        const colors = {
-            Easy: '#10b981',
-            Medium: '#f59e0b',
-            Hard: '#ef4444'
-        };
-        return colors[difficulty] || '#6b7280';
+        const diff = difficulty?.toUpperCase() || '';
+        if (diff === 'EASY') return '#10b981';
+        if (diff === 'MEDIUM') return '#f59e0b';
+        if (diff === 'HARD') return '#ef4444';
+        return '#6b7280';
     };
 
     const groupQuestionsByTopic = () => {
@@ -120,7 +118,7 @@ const QuestionsList = () => {
 
     const calculateProgress = () => {
         const total = questions.length;
-        const solved = questions.filter(q => completedQuestions.has(q._id)).length;
+        const solved = questions.filter(q => completedQuestions.has(q._id.toString())).length;
         const percentage = total > 0 ? Math.round((solved / total) * 100) : 0;
         return { total, solved, percentage };
     };
@@ -300,9 +298,9 @@ const QuestionsList = () => {
                                                     <td className="action-col">
                                                         <Link
                                                             to={`/problems/${question._id}`}
-                                                            className="btn-solve"
+                                                            className={`btn-solve ${completedQuestions.has(question._id.toString()) ? 'btn-solved' : ''}`}
                                                         >
-                                                            Solve
+                                                            {completedQuestions.has(question._id.toString()) ? 'Solved' : 'Solve'}
                                                         </Link>
                                                     </td>
                                                 </tr>

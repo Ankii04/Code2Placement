@@ -83,8 +83,9 @@
 .question-split-layout {
     display: grid;
     grid-template-columns: 40% 60%;
-    height: 100%;
+    flex: 1;
     overflow: hidden;
+    min-height: 0;
 }
 
 /* Problem Panel (Left) - 40% */

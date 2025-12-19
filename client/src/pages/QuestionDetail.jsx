@@ -16,23 +16,22 @@ const QuestionDetail = () => {
         fetchQuestion();
     }, [id]);
 
-    const fetchQuestion = async () => {
+    const fetchQuestion = async (isRefresh = false) => {
         try {
-            setLoading(true);
+            if (!isRefresh) setLoading(true);
             const data = await getQuestionById(id);
             setQuestion(data);
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to load question');
         } finally {
-            setLoading(false);
+            if (!isRefresh) setLoading(false);
         }
     };
 
     const handleSubmitSuccess = (result) => {
         if (result.allPassed) {
-            alert('🎉 Congratulations! All test cases passed!');
-            // Optionally refresh question to update completion status
-            fetchQuestion();
+            // Updated to refresh silently without a page-wide spinner
+            fetchQuestion(true);
         }
     };
 

@@ -2,6 +2,7 @@ import express from 'express';
 import axios from 'axios';
 import Question from '../models/Question.js';
 import UserProgress from '../models/UserProgress.js';
+import { protect } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
@@ -132,27 +133,46 @@ router.post('/test', async (req, res) => {
         for (let i = 0; i < Math.min(testCases.length, 5); i++) {
             const testCase = testCases[i];
 
-            const result = await executeCode(code, language, testCase.input);
+            // Format input: If it's a bracketed array string like [1,2,3], convert to space separated "length 1 2 3"
+            let formattedInput = testCase.input;
+            if (typeof formattedInput === 'string' && formattedInput.trim().startsWith('[') && formattedInput.trim().endsWith(']')) {
+                try {
+                    const parsed = JSON.parse(formattedInput);
+                    if (Array.isArray(parsed)) {
+                        formattedInput = `${parsed.length}\n${parsed.join(' ')}`;
+                    }
+                } catch (e) {
+                    console.error('Input parsing failed, using raw input');
+                }
+            }
+
+            console.log(`Running test case ${i + 1}: Original='${testCase.input}', Formatted='${formattedInput.replace(/\n/g, ' ')}'`);
+
+            const result = await executeCode(code, language, formattedInput);
+            console.log(`Result ${i + 1} success:`, result.success);
 
             if (!result.success) {
                 results.push({
                     input: testCase.input,
-                    expected: testCase.output,
-                    output: result.error,
+                    expected: testCase.expectedOutput,
+                    output: result.error || 'Unknown error',
                     passed: false,
                     error: true
                 });
+                console.log(`Case ${i + 1} failed with error`);
                 break; // Stop on first error
             }
 
-            const output = result.output.trim();
-            const expected = testCase.output.trim();
+            const output = (result.output || '').toString().trim();
+            const expected = (testCase.expectedOutput || '').toString().trim();
             const passed = output === expected;
+
+            console.log(`Case ${i + 1}: output='${output}', expected='${expected}', passed=${passed}`);
 
             results.push({
                 input: testCase.input,
-                expected: testCase.output,
-                output: result.output,
+                expected: testCase.expectedOutput,
+                output: result.output || '',
                 passed
             });
         }
@@ -174,7 +194,7 @@ router.post('/test', async (req, res) => {
  * POST /api/code/submit
  * Submit solution and run all test cases
  */
-router.post('/submit', async (req, res) => {
+router.post('/submit', protect, async (req, res) => {
     try {
         const { code, language, questionId } = req.body;
         const userId = req.user?.id;
@@ -200,12 +220,25 @@ router.post('/submit', async (req, res) => {
 
         // Run against all test cases
         for (const testCase of question.testCases || []) {
-            const result = await executeCode(code, language, testCase.input);
+            // Format input: If it's a bracketed array string like [1,2,3], convert to space separated "length 1 2 3"
+            let formattedInput = testCase.input;
+            if (typeof formattedInput === 'string' && formattedInput.trim().startsWith('[') && formattedInput.trim().endsWith(']')) {
+                try {
+                    const parsed = JSON.parse(formattedInput);
+                    if (Array.isArray(parsed)) {
+                        formattedInput = `${parsed.length}\n${parsed.join(' ')}`;
+                    }
+                } catch (e) {
+                    // Fallback
+                }
+            }
+
+            const result = await executeCode(code, language, formattedInput);
 
             if (!result.success) {
                 results.push({
                     input: testCase.input,
-                    expected: testCase.output,
+                    expected: testCase.expectedOutput,
                     output: result.error,
                     passed: false,
                     error: true
@@ -214,30 +247,49 @@ router.post('/submit', async (req, res) => {
                 break;
             }
 
-            const output = result.output.trim();
-            const expected = testCase.output.trim();
+            const output = (result.output || '').toString().trim();
+            const expected = (testCase.expectedOutput || '').toString().trim();
             const passed = output === expected;
 
             if (!passed) allPassed = false;
 
             results.push({
                 input: testCase.input,
-                expected: testCase.output,
-                output: result.output,
+                expected: testCase.expectedOutput,
+                output: result.output || '',
                 passed
             });
         }
 
         // Update user progress if authenticated and all passed
         if (userId && allPassed) {
-            await UserProgress.findOneAndUpdate(
-                { user: userId },
-                {
-                    $addToSet: { completedQuestions: questionId },
-                    $inc: { totalScore: question.points || 10 }
-                },
-                { upsert: true }
+            const progress = await UserProgress.findOne({ user: userId });
+
+            // Check if already solved
+            const isAlreadySolved = progress?.solvedQuestions?.some(
+                sq => sq.question.toString() === questionId
             );
+
+            if (!isAlreadySolved) {
+                const difficultyKey = `${question.difficulty.toLowerCase()}Count`;
+
+                await UserProgress.findOneAndUpdate(
+                    { user: userId },
+                    {
+                        $push: {
+                            solvedQuestions: {
+                                question: questionId,
+                                solvedAt: new Date()
+                            }
+                        },
+                        $inc: {
+                            totalSolved: 1,
+                            [difficultyKey]: 1
+                        }
+                    },
+                    { upsert: true, new: true }
+                );
+            }
         }
 
         res.json({

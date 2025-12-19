@@ -117,8 +117,10 @@
     background: var(--bg-secondary);
     display: flex;
     flex-direction: column;
-    max-height: 35%;
+    height: 40%;
+    min-height: 200px;
     position: relative;
+    overflow: hidden;
 }
 
 /* Bottom Tabs */
@@ -156,8 +158,8 @@
     flex: 1;
     overflow-y: auto;
     padding: 1rem;
-    min-height: 150px;
-    max-height: 250px;
+    padding-bottom: 5rem;
+    /* Space for buttons */
 }
 
 /* Testcase Panel */
