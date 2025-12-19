@@ -71,6 +71,10 @@ const Navbar = () => {
                                                 <span className="item-icon">❓</span>
                                                 Questions
                                             </Link>
+                                            <Link to="/aptitude" className="dropdown-item">
+                                                <span className="item-icon">🎯</span>
+                                                Aptitude Tests
+                                            </Link>
                                             <Link to="/interview-qa" className="dropdown-item">
                                                 <span className="item-icon">💬</span>
                                                 Interview Q&A
