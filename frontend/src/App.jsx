@@ -51,17 +51,22 @@ const AppContent = () => {
 
     return (
         <div className="app">
-            <Snowfall
-                color="#dee4fd"
-                snowflakeCount={150}
-                style={{
-                    position: 'fixed',
-                    width: '100vw',
-                    height: '100vh',
-                    zIndex: 1000,
-                    pointerEvents: 'none'
-                }}
-            />
+            {location.pathname === '/' && (
+                <Snowfall
+                    color="#dee4fd"
+                    snowflakeCount={150}
+                    speed={[0.5, 1.0]}
+                    wind={[-0.5, 0.5]}
+                    radius={[0.5, 3.0]}
+                    style={{
+                        position: 'fixed',
+                        width: '100vw',
+                        height: '100vh',
+                        zIndex: 1000,
+                        pointerEvents: 'none'
+                    }}
+                />
+            )}
             <Navbar />
             <main className="main-content">
                 <Routes>

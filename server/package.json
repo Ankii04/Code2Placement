@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node api/index.js",
-    "dev": "node --watch api/index.js",
+    "dev": "node api/index.js",
     "seed": "node utils/seedCompleteDSA.js",
     "seed:content": "node utils/seedAnimatedContent.js",
     "seed:old": "node utils/seed.js"
