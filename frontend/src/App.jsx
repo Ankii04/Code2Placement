@@ -34,6 +34,11 @@ import ResumeAnalysis from './pages/ResumeAnalysis';
 import Courses from './pages/Courses';
 import TPOPanel from './pages/TPOPanel';
 
+// Aptitude Test Pages
+import AptitudeTests from './pages/AptitudeTests';
+import AptitudeTestInterface from './pages/AptitudeTestInterface';
+import AptitudeTestResults from './pages/AptitudeTestResults';
+
 // Protected Route
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
@@ -163,6 +168,23 @@ const AppContent = () => {
                     <Route path="/tpo" element={
                         <ProtectedRoute>
                             <TPOPanel />
+                        </ProtectedRoute>
+                    } />
+
+                    {/* Aptitude Test Routes */}
+                    <Route path="/aptitude" element={
+                        <ProtectedRoute>
+                            <AptitudeTests />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/aptitude/test/:attemptId" element={
+                        <ProtectedRoute>
+                            <AptitudeTestInterface />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/aptitude/results/:attemptId" element={
+                        <ProtectedRoute>
+                            <AptitudeTestResults />
                         </ProtectedRoute>
                     } />
 
