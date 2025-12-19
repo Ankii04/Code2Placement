@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import Snowfall from 'react-snowfall';
 import './App.css';
 
 // Public Pages
@@ -50,6 +51,17 @@ const AppContent = () => {
 
     return (
         <div className="app">
+            <Snowfall
+                color="#dee4fd"
+                snowflakeCount={150}
+                style={{
+                    position: 'fixed',
+                    width: '100vw',
+                    height: '100vh',
+                    zIndex: 1000,
+                    pointerEvents: 'none'
+                }}
+            />
             <Navbar />
             <main className="main-content">
                 <Routes>

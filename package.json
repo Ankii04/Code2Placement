@@ -3,9 +3,11 @@
     "version": "1.0.0",
     "description": "Code2Placement - DSA & Placement Preparation Platform",
     "scripts": {
-        "install-server": "cd server && npm install",
+        "install-backend": "cd server && npm install",
+        "install-frontend": "cd frontend && npm install",
         "start": "cd server && npm start",
-        "dev": "cd server && npm run dev"
+        "dev-backend": "cd server && npm run dev",
+        "dev-frontend": "cd frontend && npm run dev"
     },
     "engines": {
         "node": ">=18.x"
