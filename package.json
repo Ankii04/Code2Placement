@@ -2,12 +2,28 @@
     "name": "code2placement",
     "version": "1.0.0",
     "description": "Code2Placement - DSA & Placement Preparation Platform",
+    "type": "module",
     "scripts": {
         "install-backend": "cd server && npm install",
         "install-frontend": "cd frontend && npm install",
-        "start": "cd server && npm start",
+        "start": "node api/index.js",
         "dev-backend": "cd server && npm run dev",
-        "dev-frontend": "cd frontend && npm run dev"
+        "dev-frontend": "cd frontend && npm run dev",
+        "build": "cd server && npm install"
+    },
+    "dependencies": {
+        "@google/genai": "^1.33.0",
+        "axios": "^1.13.2",
+        "bcryptjs": "^2.4.3",
+        "cors": "^2.8.5",
+        "dotenv": "^16.3.1",
+        "express": "^4.18.2",
+        "jsonwebtoken": "^9.0.2",
+        "mongoose": "^8.0.3",
+        "multer": "^2.0.2",
+        "pdf-parse": "^1.1.1",
+        "pdfkit": "^0.17.2",
+        "validator": "^13.11.0"
     },
     "engines": {
         "node": ">=18.x"
