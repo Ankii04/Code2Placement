@@ -38,6 +38,9 @@ import topicContentRoutes from './topic-content.js';
 // Code Execution Routes
 import codeExecutionRoutes from './code-execution.js';
 
+// Aptitude Test Routes
+import aptitudeRoutes from './aptitude.js';
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -121,6 +124,9 @@ app.use('/api/topic-content', topicContentRoutes);
 
 // Code Execution Routes
 app.use('/api/code', codeExecutionRoutes);
+
+// Aptitude Test Routes
+app.use('/api/aptitude', aptitudeRoutes);
 
 // Misc Routes (admin stats, etc.)
 app.use('/api/misc', miscRoutes);
