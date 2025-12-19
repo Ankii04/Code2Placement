@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts';
-import axios from 'axios';
+import api from '../services/api';
 import './SkillDashboard.css';
 
 const SkillDashboard = () => {
@@ -15,12 +15,9 @@ const SkillDashboard = () => {
 
     const fetchData = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const config = { headers: { Authorization: `Bearer ${token}` } };
-
             const [dsaRes, readinessRes] = await Promise.all([
-                axios.get('/api/analytics/dsa/score', config),
-                axios.get('/api/analytics/readiness', config)
+                api.get('/analytics/dsa/score'),
+                api.get('/analytics/readiness')
             ]);
 
             setDsaScore(dsaRes.data);

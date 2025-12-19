@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../services/api';
 import './MockInterview.css';
 
 const MockInterview = () => {
@@ -75,10 +75,7 @@ const MockInterview = () => {
 
     const fetchHistory = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const { data } = await axios.get('/api/ai/interview/history', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const { data } = await api.get('/ai/interview/history');
             setHistory(data);
         } catch (error) {
             console.error('Failed to fetch history:', error);
@@ -93,10 +90,8 @@ const MockInterview = () => {
 
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            const { data } = await axios.post('/api/ai/interview/start',
-                { type: interviewType },
-                { headers: { Authorization: `Bearer ${token}` } }
+            const { data } = await api.post('/ai/interview/start',
+                { type: interviewType }
             );
 
             setInterview(data);
@@ -119,11 +114,9 @@ const MockInterview = () => {
 
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            const { data } = await axios.post(
-                `/api/ai/interview/${interview.interviewId}/answer`,
-                { questionIndex: currentQuestionIndex, answer },
-                { headers: { Authorization: `Bearer ${token}` } }
+            const { data } = await api.post(
+                `/ai/interview/${interview.interviewId}/answer`,
+                { questionIndex: currentQuestionIndex, answer }
             );
 
             // Store answer and evaluation
@@ -150,11 +143,9 @@ const MockInterview = () => {
     const completeInterview = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            const { data } = await axios.post(
-                `/api/ai/interview/${interview.interviewId}/complete`,
-                {},
-                { headers: { Authorization: `Bearer ${token}` } }
+            const { data } = await api.post(
+                `/ai/interview/${interview.interviewId}/complete`,
+                {}
             );
 
             setFinalResults(data);

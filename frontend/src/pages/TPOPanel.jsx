@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import './TPOPanel.css';
 
@@ -23,7 +23,7 @@ const TPOPanel = () => {
     const fetchAnnouncements = async () => {
         try {
             setLoading(true);
-            const { data } = await axios.get('/api/tpo/announcements');
+            const { data } = await api.get('/tpo/announcements');
             setAnnouncements(data);
         } catch (error) {
             console.error('Failed to fetch announcements:', error);
@@ -35,7 +35,7 @@ const TPOPanel = () => {
     const fetchExams = async () => {
         try {
             setLoading(true);
-            const { data } = await axios.get('/api/tpo/exams');
+            const { data } = await api.get('/tpo/exams');
             setExams(data);
         } catch (error) {
             console.error('Failed to fetch exams:', error);
@@ -47,10 +47,7 @@ const TPOPanel = () => {
     const handleSubmitAnnouncement = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
-            await axios.post('/api/tpo/announcements', formData, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await api.post('/tpo/announcements', formData);
             setShowForm(false);
             setFormData({});
             fetchAnnouncements();
@@ -62,10 +59,7 @@ const TPOPanel = () => {
     const handleSubmitExam = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
-            await axios.post('/api/tpo/exams', formData, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await api.post('/tpo/exams', formData);
             setShowForm(false);
             setFormData({});
             fetchExams();
@@ -78,10 +72,7 @@ const TPOPanel = () => {
         if (!confirm('Are you sure you want to delete this?')) return;
 
         try {
-            const token = localStorage.getItem('token');
-            await axios.delete(`/api/tpo/${type}/${id}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await api.delete(`/tpo/${type}/${id}`);
 
             if (type === 'announcements') {
                 fetchAnnouncements();

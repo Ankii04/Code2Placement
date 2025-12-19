@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import DSAVisualizer from './DSAVisualizer';
 import './DSATopicNotes.css';
 

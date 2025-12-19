@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import './ResumeAnalysis.css';
 
 const ResumeAnalysis = () => {
@@ -15,10 +15,7 @@ const ResumeAnalysis = () => {
 
     const fetchHistory = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const { data } = await axios.get('/api/ai/resume/history', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const { data } = await api.get('/ai/resume/history');
             setHistory(data);
         } catch (error) {
             console.error('Failed to fetch history:', error);
@@ -27,10 +24,7 @@ const ResumeAnalysis = () => {
 
     const fetchLatest = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const { data } = await axios.get('/api/ai/resume/latest', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const { data } = await api.get('/ai/resume/latest');
             setAnalysis(data);
         } catch (error) {
             // No previous analysis
@@ -57,11 +51,9 @@ const ResumeAnalysis = () => {
             const formData = new FormData();
             formData.append('resume', file);
 
-            const token = localStorage.getItem('token');
-            const { data } = await axios.post('/api/ai/resume/analyze', formData, {
+            const { data } = await api.post('/ai/resume/analyze', formData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${token}`
+                    'Content-Type': 'multipart/form-data'
                 }
             });
 

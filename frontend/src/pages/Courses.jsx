@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import './Courses.css';
 
 const Courses = () => {
@@ -17,7 +17,7 @@ const Courses = () => {
         try {
             setLoading(true);
             const params = new URLSearchParams(filter);
-            const { data } = await axios.get(`/api/courses?${params}`);
+            const { data } = await api.get(`/courses?${params}`);
             setCourses(data);
         } catch (error) {
             console.error('Failed to fetch courses:', error);
@@ -30,10 +30,8 @@ const Courses = () => {
         try {
             const token = localStorage.getItem('token');
             const [courseRes, progressRes] = await Promise.all([
-                axios.get(`/api/courses/${courseId}`),
-                token ? axios.get(`/api/courses/${courseId}/progress`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                }) : Promise.resolve({ data: null })
+                api.get(`/courses/${courseId}`),
+                token ? api.get(`/courses/${courseId}/progress`) : Promise.resolve({ data: null })
             ]);
 
             setSelectedCourse(courseRes.data);
@@ -51,10 +49,9 @@ const Courses = () => {
                 return;
             }
 
-            const { data } = await axios.post(
-                `/api/courses/${selectedCourse._id}/videos/${videoId}/complete`,
-                {},
-                { headers: { Authorization: `Bearer ${token}` } }
+            const { data } = await api.post(
+                `/courses/${selectedCourse._id}/videos/${videoId}/complete`,
+                {}
             );
 
             setProgress(data);
