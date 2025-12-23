@@ -240,9 +240,15 @@ router.put('/tests/:attemptId/submit', protect, async (req, res) => {
             status: 'completed'
         }).select('totalScore');
 
-        const lowerScores = allAttempts.filter(a => a.totalScore < attempt.totalScore).length;
-        attempt.percentile = Math.round((lowerScores / allAttempts.length) * 100);
-        attempt.rank = allAttempts.length - lowerScores;
+        const totalOthers = allAttempts.length;
+        if (totalOthers === 0) {
+            attempt.percentile = 100;
+            attempt.rank = 1;
+        } else {
+            const lowerScores = allAttempts.filter(a => a.totalScore < attempt.totalScore).length;
+            attempt.percentile = Math.round((lowerScores / totalOthers) * 100);
+            attempt.rank = totalOthers - lowerScores + 1;
+        }
 
         // Identify strengths and weaknesses
         const strengths = [];
