@@ -52,7 +52,8 @@ const AppContent = () => {
     const location = useLocation();
     // Regex to match /problems/:id or /questions/:id
     const isCodingPage = location.pathname.match(/\/problems\/[a-zA-Z0-9]+/) ||
-        location.pathname.match(/\/questions\/[a-zA-Z0-9]+/);
+        location.pathname.match(/\/questions\/[a-zA-Z0-9]+/) ||
+        location.pathname.match(/\/aptitude\/test\/[a-zA-Z0-9]+/);
 
     return (
         <div className="app">

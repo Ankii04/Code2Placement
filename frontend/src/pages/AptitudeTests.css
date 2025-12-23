@@ -103,16 +103,21 @@
 .question-text svg,
 .question-text canvas {
     max-width: 100%;
+    max-height: 300px;
+    /* Limit height of decorations/images */
+    width: auto;
     height: auto !important;
     border-radius: 12px;
-    margin: 1rem 0;
+    margin: 1.5rem auto;
     display: block;
+    object-fit: contain;
 }
 
 .options-container {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
 }
 
 .option {
@@ -123,7 +128,8 @@
     border: 2px solid var(--border-color);
     border-radius: 12px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
 }
 
 .option:hover {
