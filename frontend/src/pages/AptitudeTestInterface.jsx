@@ -3,6 +3,78 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import './AptitudeTests.css';
 
+const AptitudeCalculator = ({ onClose }) => {
+    const [display, setDisplay] = useState('0');
+    const [equation, setEquation] = useState('');
+
+    const handleNumber = (num) => {
+        if (display === '0' || display === 'Error') {
+            setDisplay(num);
+        } else {
+            setDisplay(display + num);
+        }
+    };
+
+    const handleOperator = (op) => {
+        setEquation(display + ' ' + op + ' ');
+        setDisplay('0');
+    };
+
+    const calculate = () => {
+        try {
+            const finalEquation = equation + display;
+            // Safe evaluation using Basic Math logic
+            const result = eval(finalEquation.replace(/[^-()\d/*+.]/g, ''));
+            setDisplay(String(Number(result.toFixed(8))));
+            setEquation('');
+        } catch (e) {
+            setDisplay('Error');
+        }
+    };
+
+    const clear = () => {
+        setDisplay('0');
+        setEquation('');
+    };
+
+    return (
+        <div className="calculator-modal animate-fade-in">
+            <div className="calculator-header">
+                <span>Calculator</span>
+                <button onClick={onClose}>&times;</button>
+            </div>
+            <div className="calculator-display">
+                <div className="calculation">{equation}</div>
+                <div className="main-display">{display}</div>
+            </div>
+            <div className="calculator-keys">
+                <button className="key-tool" onClick={clear}>C</button>
+                <button className="key-tool" onClick={() => setDisplay(display.slice(0, -1) || '0')}>⌫</button>
+                <button className="key-op" onClick={() => handleOperator('/')}>÷</button>
+                <button className="key-op" onClick={() => handleOperator('*')}>×</button>
+
+                <button onClick={() => handleNumber('7')}>7</button>
+                <button onClick={() => handleNumber('8')}>8</button>
+                <button onClick={() => handleNumber('9')}>9</button>
+                <button className="key-op" onClick={() => handleOperator('-')}>-</button>
+
+                <button onClick={() => handleNumber('4')}>4</button>
+                <button onClick={() => handleNumber('5')}>5</button>
+                <button onClick={() => handleNumber('6')}>6</button>
+                <button className="key-op" onClick={() => handleOperator('+')}>+</button>
+
+                <button onClick={() => handleNumber('1')}>1</button>
+                <button onClick={() => handleNumber('2')}>2</button>
+                <button onClick={() => handleNumber('3')}>3</button>
+                <button className="key-equal" onClick={calculate}>=</button>
+
+                <button className="key-zero" onClick={() => handleNumber('0')}>0</button>
+                <button onClick={() => handleNumber('.')}>.</button>
+            </div>
+        </div>
+    );
+};
+
 const AptitudeTestInterface = () => {
     const { attemptId } = useParams();
     const navigate = useNavigate();
@@ -291,6 +363,11 @@ const AptitudeTestInterface = () => {
                             📝 Notepad
                         </button>
                     </div>
+
+                    {/* Calculator Overlay */}
+                    {showCalculator && (
+                        <AptitudeCalculator onClose={() => setShowCalculator(false)} />
+                    )}
 
                     {/* Notepad */}
                     {showNotepad && (
