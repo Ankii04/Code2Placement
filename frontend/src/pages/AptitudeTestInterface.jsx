@@ -233,9 +233,9 @@ const AptitudeTestInterface = () => {
                     </div>
 
                     {/* Progress Bar */}
-                    <div className="progress-bar">
+                    <div className="test-progress-bar">
                         <div
-                            className="progress-fill"
+                            className="test-progress-fill"
                             style={{ width: `${((currentQuestionIndex + 1) / currentSection.questions.length) * 100}%` }}
                         ></div>
                     </div>
