@@ -21,11 +21,11 @@ app.get('/', protect, async (req, res) => {
             status: 'COMPLETED'
         }).sort({ completedAt: -1 }).limit(5);
 
-        const dsaScore = skillAnalysis?.dsaScore.overall || 0;
-        const csScore = skillAnalysis?.csFundamentals.overall || 0;
+        const dsaScore = skillAnalysis?.dsaScore?.overall || 0;
+        const csScore = skillAnalysis?.csFundamentals?.overall || 0;
         const resumeScore = resumeAnalysis?.score || 0;
-        const interviewScore = interviews.length > 0
-            ? Math.round(interviews.reduce((sum, i) => sum + i.scores.overall, 0) / interviews.length)
+        const interviewScore = interviews && interviews.length > 0
+            ? Math.round(interviews.reduce((sum, i) => sum + (i.scores?.overall || 0), 0) / interviews.length)
             : 0;
 
         // Company weights and requirements

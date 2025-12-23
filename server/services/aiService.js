@@ -63,7 +63,7 @@ Be specific and actionable in your suggestions.`;
                 return JSON.parse(jsonMatch[0]);
             }
 
-            throw new Error('Failed to parse AI response');
+            throw new Error('Failed to parse AI response. The response may not be in the expected format.');
         } catch (error) {
             console.error('Resume analysis error:', error);
             throw error;

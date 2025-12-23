@@ -8,6 +8,7 @@
     "start": "node api/index.js",
     "dev": "node api/index.js",
     "seed": "node utils/seedCompleteDSA.js",
+    "seed:aptitude": "node utils/seedAptitudeData.js",
     "seed:content": "node utils/seedAnimatedContent.js",
     "seed:old": "node utils/seed.js"
   },
