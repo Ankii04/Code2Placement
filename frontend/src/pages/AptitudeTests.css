@@ -258,30 +258,43 @@
     border-radius: 4px;
 }
 
-/* Progress Bar */
-.test-progress-bar {
-    height: 10px !important;
-    max-height: 10px !important;
-    width: 100%;
-    background: var(--bg-tertiary);
-    border-radius: 5px;
-    overflow: hidden;
-    margin-bottom: 2rem;
-    position: relative;
+/* Progress Bar - SUPER RIGID */
+.apti-custom-progress-container {
+    height: 12px !important;
+    min-height: 12px !important;
+    max-height: 12px !important;
+    width: 100% !important;
+    background: var(--bg-tertiary) !important;
+    border-radius: 6px !important;
+    overflow: hidden !important;
+    margin: 1.5rem 0 2rem 0 !important;
+    padding: 0 !important;
     border: none !important;
-    /* Ensure no border-radius weirdness */
+    display: block !important;
+    position: relative !important;
 }
 
-.test-progress-fill {
+.apti-custom-progress-bar {
     height: 100% !important;
-    background: var(--gradient-primary);
-    transition: width 0.3s ease;
+    background: var(--gradient-primary) !important;
+    transition: width 0.4s ease !important;
     border-radius: 0 !important;
+    border: none !important;
+    display: block !important;
 }
 
-/* Fix for any potential runaway elements */
+/* Force-contain all runaway elements in the question area */
 .question-area * {
-    max-width: 100%;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.question-text img,
+.question-text svg,
+.question-text canvas,
+.question-text div {
+    max-height: 400px;
+    object-fit: contain;
 }
 
 /* Calculator Modal */

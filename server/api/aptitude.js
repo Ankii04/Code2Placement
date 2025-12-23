@@ -210,8 +210,8 @@ router.put('/tests/:attemptId/submit', protect, async (req, res) => {
             select: 'question options correctAnswer explanation quickTip difficulty'
         }).populate('testPattern', 'name company totalQuestions cutoff');
 
-        if (!attempt) {
-            return res.status(404).json({ message: 'Test attempt not found' });
+        if (!attempt || !attempt.sections) {
+            return res.status(404).json({ message: 'Test attempt data corrupted' });
         }
 
         // Calculate total score
@@ -219,28 +219,30 @@ router.put('/tests/:attemptId/submit', protect, async (req, res) => {
         let totalQuestions = 0;
 
         attempt.sections.forEach(section => {
-            const correctAnswers = section.questions.filter(q => q.isCorrect).length;
+            if (!section || !section.questions) return;
+
+            const correctAnswers = section.questions.filter(q => q?.isCorrect).length;
             section.score = correctAnswers;
-            section.accuracy = (correctAnswers / section.questions.length) * 100;
-            section.timeSpent = section.questions.reduce((sum, q) => sum + q.timeTaken, 0);
+            section.accuracy = section.questions.length > 0 ? (correctAnswers / section.questions.length) * 100 : 0;
+            section.timeSpent = (section.questions || []).reduce((sum, q) => sum + (q?.timeTaken || 0), 0);
             section.completedAt = section.completedAt || new Date();
 
             totalCorrect += correctAnswers;
-            totalQuestions += section.questions.length;
+            totalQuestions += (section.questions || []).length;
         });
 
         attempt.totalScore = totalCorrect;
-        attempt.percentage = (totalCorrect / totalQuestions) * 100;
+        attempt.percentage = totalQuestions > 0 ? (totalCorrect / totalQuestions) * 100 : 0;
         attempt.completedAt = new Date();
         attempt.status = 'completed';
 
-        // Calculate percentile (simplified - compare with other attempts)
+        // Calculate percentile
         const allAttempts = await TestAttempt.find({
-            testPattern: attempt.testPattern._id,
+            testPattern: attempt.testPattern?._id || attempt.testPattern,
             status: 'completed'
         }).select('totalScore');
 
-        const totalOthers = allAttempts.length;
+        const totalOthers = (allAttempts || []).length;
         if (totalOthers === 0) {
             attempt.percentile = 100;
             attempt.rank = 1;
