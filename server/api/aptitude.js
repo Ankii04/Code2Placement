@@ -4,6 +4,8 @@ import TestPattern from '../models/TestPattern.js';
 import TestAttempt from '../models/TestAttempt.js';
 import AptitudeQuestion from '../models/AptitudeQuestion.js';
 import AptitudeModule from '../models/AptitudeModule.js';
+import AptitudeCategory from '../models/AptitudeCategory.js';
+import AptitudeTopic from '../models/AptitudeTopic.js';
 
 const router = express.Router();
 

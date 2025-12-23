@@ -1,12 +1,10 @@
+import '../config/env.js';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import AptitudeModule from '../models/AptitudeModule.js';
 import AptitudeCategory from '../models/AptitudeCategory.js';
 import AptitudeTopic from '../models/AptitudeTopic.js';
 import AptitudeQuestion from '../models/AptitudeQuestion.js';
 import TestPattern from '../models/TestPattern.js';
-
-dotenv.config();
 
 const seedAptitudeData = async () => {
     try {
