@@ -103,12 +103,6 @@ const Dashboard = () => {
                             <p>Prepare for technical interviews</p>
                         </Link>
 
-                        <Link to="/aptitude" className="action-card glass-card">
-                            <div className="action-icon">🎯</div>
-                            <h3>Aptitude Tests</h3>
-                            <p>Practice company test patterns</p>
-                        </Link>
-
                         <Link to="/forum" className="action-card glass-card">
                             <div className="action-icon">👥</div>
                             <h3>Community</h3>

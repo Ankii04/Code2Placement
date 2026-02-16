@@ -1,6 +1,6 @@
 # Dependencies
 node_modules/
-client/node_modules/
+frontend/node_modules/
 server/node_modules/
 
 # Environment variables
@@ -9,8 +9,8 @@ server/node_modules/
 .env.production
 
 # Build outputs
-client/dist/
-client/build/
+frontend/dist/
+frontend/build/
 
 # Logs
 *.log

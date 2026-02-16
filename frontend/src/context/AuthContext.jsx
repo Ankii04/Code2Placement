@@ -17,18 +17,15 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem('token'));
 
     useEffect(() => {
-        const checkAuth = async () => {
-            if (token) {
-                // Set api default header
-                api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-                // Load user data
-                await loadUser();
-            } else {
-                setLoading(false);
-            }
-        };
-        checkAuth();
-    }, [token]);
+        if (token) {
+            // Set api default header
+            api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            // Load user data
+            loadUser();
+        } else {
+            setLoading(false);
+        }
+    }, []);
 
     const loadUser = async () => {
         try {

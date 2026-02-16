@@ -34,11 +34,6 @@ import ResumeAnalysis from './pages/ResumeAnalysis';
 import Courses from './pages/Courses';
 import TPOPanel from './pages/TPOPanel';
 
-// Aptitude Test Pages
-import AptitudeTests from './pages/AptitudeTests';
-import AptitudeTestInterface from './pages/AptitudeTestInterface';
-import AptitudeTestResults from './pages/AptitudeTestResults';
-
 // Protected Route
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
@@ -52,8 +47,7 @@ const AppContent = () => {
     const location = useLocation();
     // Regex to match /problems/:id or /questions/:id
     const isCodingPage = location.pathname.match(/\/problems\/[a-zA-Z0-9]+/) ||
-        location.pathname.match(/\/questions\/[a-zA-Z0-9]+/) ||
-        location.pathname.match(/\/aptitude\/test\/[a-zA-Z0-9]+/);
+        location.pathname.match(/\/questions\/[a-zA-Z0-9]+/);
 
     return (
         <div className="app">
@@ -169,23 +163,6 @@ const AppContent = () => {
                     <Route path="/tpo" element={
                         <ProtectedRoute>
                             <TPOPanel />
-                        </ProtectedRoute>
-                    } />
-
-                    {/* Aptitude Test Routes */}
-                    <Route path="/aptitude" element={
-                        <ProtectedRoute>
-                            <AptitudeTests />
-                        </ProtectedRoute>
-                    } />
-                    <Route path="/aptitude/test/:attemptId" element={
-                        <ProtectedRoute>
-                            <AptitudeTestInterface />
-                        </ProtectedRoute>
-                    } />
-                    <Route path="/aptitude/results/:attemptId" element={
-                        <ProtectedRoute>
-                            <AptitudeTestResults />
                         </ProtectedRoute>
                     } />
 

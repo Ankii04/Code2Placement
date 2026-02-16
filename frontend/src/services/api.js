@@ -32,14 +32,8 @@ api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            // Only redirect if we're not already on a login/register page
-            const publicPages = ['/login', '/register', '/'];
-            if (!publicPages.includes(window.location.pathname)) {
-                // We don't remove token immediately to allow for a second try or refresh handling
-                // localStorage.removeItem('token');
-                // window.location.href = '/login';
-                console.warn('Unauthorized access - potential token expiry');
-            }
+            localStorage.removeItem('token');
+            window.location.href = '/login';
         }
         return Promise.reject(error);
     }
