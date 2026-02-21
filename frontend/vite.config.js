@@ -16,12 +16,20 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
+    // Enable CSS code splitting
+    cssCodeSplit: true,
+    // Reduce chunk size warnings threshold
+    chunkSizeWarningLimit: 500,
     rollupOptions: {
       output: {
         manualChunks: {
+          // Core React libraries (cached independently)
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          // Heavy third-party libraries in separate chunks
+          'chart-vendor': ['recharts'],
+          'animation-vendor': ['framer-motion'],
         }
       }
-    }
+    },
   }
 })

@@ -1,21 +1,9 @@
 import express from 'express';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import connectDB from '../config/db.js';
 import User from '../models/User.js';
 import UserProgress from '../models/UserProgress.js';
 import { protect } from '../middleware/auth.middleware.js';
 
-dotenv.config();
-
 const app = express();
-
-// Middleware
-app.use(cors());
-app.use(express.json());
-
-// Connect to MongoDB
-connectDB();
 
 // @route   GET /api/users/profile
 // @desc    Get user profile

@@ -1,21 +1,9 @@
 import express from 'express';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import connectDB from '../config/db.js';
 import User from '../models/User.js';
 import { generateToken } from '../middleware/auth.middleware.js';
 import validator from 'validator';
 
-dotenv.config();
-
 const app = express();
-
-// Middleware
-app.use(cors());
-app.use(express.json());
-
-// Connect to MongoDB
-connectDB();
 
 // @route   POST /api/auth/register
 // @desc    Register a new user

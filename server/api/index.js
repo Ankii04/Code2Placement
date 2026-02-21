@@ -74,10 +74,20 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Connect to MongoDB and seed content
-connectDB().then(async () => {
-    // Auto-seed content on startup (only in development)
-    if (process.env.NODE_ENV !== 'production') {
+// Ensure MongoDB is connected before handling any API request
+app.use('/api', async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (error) {
+        console.error('Database connection failed:', error.message);
+        res.status(503).json({ message: 'Service temporarily unavailable. Please try again.' });
+    }
+});
+
+// Auto-seed content on startup (only in development)
+if (process.env.NODE_ENV !== 'production') {
+    connectDB().then(async () => {
         try {
             const seedCompleteContent = (await import('../scripts/seedCompleteContent.js')).default;
             await seedCompleteContent();
@@ -85,8 +95,8 @@ connectDB().then(async () => {
         } catch (error) {
             console.log('ℹ️  Seeding skipped or already done');
         }
-    }
-});
+    });
+}
 
 // Health check
 app.get('/api/health', (req, res) => {

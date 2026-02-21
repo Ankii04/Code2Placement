@@ -1,21 +1,9 @@
 import express from 'express';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import connectDB from '../config/db.js';
 import Topic from '../models/Topic.js';
 import Question from '../models/Question.js';
 import { protect, requireAdmin } from '../middleware/auth.middleware.js';
 
-dotenv.config();
-
 const app = express();
-
-// Middleware
-app.use(cors());
-app.use(express.json());
-
-// Connect to MongoDB
-connectDB();
 
 // @route   GET /api/topics
 // @desc    Get all topics with filters

@@ -1,17 +1,9 @@
 import express from 'express';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import connectDB from '../config/db.js';
 import ForumThread from '../models/ForumThread.js';
 import ForumReply from '../models/ForumReply.js';
 import { protect, requireAdmin } from '../middleware/auth.middleware.js';
 
-dotenv.config();
-
 const app = express();
-app.use(cors());
-app.use(express.json());
-connectDB();
 
 // GET all threads
 app.get('/threads', async (req, res) => {

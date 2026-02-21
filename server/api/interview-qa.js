@@ -1,16 +1,8 @@
 import express from 'express';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import connectDB from '../config/db.js';
 import InterviewQA from '../models/InterviewQA.js';
 import { protect, requireAdmin } from '../middleware/auth.middleware.js';
 
-dotenv.config();
-
 const app = express();
-app.use(cors());
-app.use(express.json());
-connectDB();
 
 // GET all interview Q&A with filters
 app.get('/', async (req, res) => {
