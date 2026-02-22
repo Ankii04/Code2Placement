@@ -28,9 +28,9 @@ import readinessAnalytics from './analytics/readiness.js';
 // Course Routes
 import coursesRoutes from './courses.js';
 
-// TPO Routes
-import announcementsTPO from './tpo/announcements.js';
-import examsTPO from './tpo/exams.js';
+// Roadmap & Resource Routes
+import roadmapRoutes from './roadmaps.js';
+import resourceRoutes from './resources.js';
 
 // Topic Content Routes
 import topicContentRoutes from './topic-content.js';
@@ -125,9 +125,9 @@ app.use('/api/analytics/readiness', readinessAnalytics);
 // Course Routes
 app.use('/api/courses', coursesRoutes);
 
-// TPO Routes
-app.use('/api/tpo/announcements', announcementsTPO);
-app.use('/api/tpo/exams', examsTPO);
+// Roadmap & Resource Routes
+app.use('/api/roadmaps', roadmapRoutes);
+app.use('/api/resources', resourceRoutes);
 
 // Topic Content Routes
 app.use('/api/topic-content', topicContentRoutes);

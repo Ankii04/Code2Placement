@@ -30,7 +30,6 @@ const SkillDashboard = lazy(() => import('./pages/SkillDashboard'));
 const MockInterview = lazy(() => import('./pages/MockInterview'));
 const ResumeAnalysis = lazy(() => import('./pages/ResumeAnalysis'));
 const Courses = lazy(() => import('./pages/Courses'));
-const TPOPanel = lazy(() => import('./pages/TPOPanel'));
 
 // Admin Pages (lazy-loaded)
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
@@ -152,11 +151,7 @@ const AppContent = () => {
                                 <Courses />
                             </ProtectedRoute>
                         } />
-                        <Route path="/tpo" element={
-                            <ProtectedRoute>
-                                <TPOPanel />
-                            </ProtectedRoute>
-                        } />
+
 
                         {/* Admin Routes */}
                         <Route path="/admin" element={
