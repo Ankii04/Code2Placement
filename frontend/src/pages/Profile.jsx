@@ -151,86 +151,88 @@ const Profile = () => {
                         </div>
                     </div>
 
-                    {/* Stats Card */}
-                    <div className="stats-card glass-card">
-                        <h3>📊 Your Statistics</h3>
-                        <div className="stats-grid">
-                            <div className="stat-item">
-                                <div className="stat-icon">📚</div>
-                                <div className="stat-details">
-                                    <div className="stat-value">{stats?.topicsCompleted || 0}</div>
-                                    <div className="stat-label">Topics Completed</div>
+                    <div className="profile-right-column">
+                        {/* Stats Card */}
+                        <div className="stats-card glass-card">
+                            <h3>📊 Your Statistics</h3>
+                            <div className="stats-grid">
+                                <div className="stat-item">
+                                    <div className="stat-icon">📚</div>
+                                    <div className="stat-details">
+                                        <div className="stat-value">{stats?.topicsCompleted || 0}</div>
+                                        <div className="stat-label">Topics Completed</div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="stat-item">
-                                <div className="stat-icon">💻</div>
-                                <div className="stat-details">
-                                    <div className="stat-value">{stats?.questionsCompleted || 0}</div>
-                                    <div className="stat-label">Questions Solved</div>
+                                <div className="stat-item">
+                                    <div className="stat-icon">💻</div>
+                                    <div className="stat-details">
+                                        <div className="stat-value">{stats?.questionsCompleted || 0}</div>
+                                        <div className="stat-label">Questions Solved</div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="stat-item">
-                                <div className="stat-icon">⭐</div>
-                                <div className="stat-details">
-                                    <div className="stat-value">{stats?.totalScore || 0}</div>
-                                    <div className="stat-label">Total Score</div>
+                                <div className="stat-item">
+                                    <div className="stat-icon">⭐</div>
+                                    <div className="stat-details">
+                                        <div className="stat-value">{stats?.totalScore || 0}</div>
+                                        <div className="stat-label">Total Score</div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="stat-item">
-                                <div className="stat-icon">🏆</div>
-                                <div className="stat-details">
-                                    <div className="stat-value">{stats?.badges || 0}</div>
-                                    <div className="stat-label">Badges Earned</div>
+                                <div className="stat-item">
+                                    <div className="stat-icon">🏆</div>
+                                    <div className="stat-details">
+                                        <div className="stat-value">{stats?.badges || 0}</div>
+                                        <div className="stat-label">Badges Earned</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Badges Card */}
-                    <div className="badges-card glass-card">
-                        <h3>🏆 Achievements</h3>
-                        {profile?.badges?.length > 0 ? (
-                            <div className="badges-grid">
-                                {profile.badges.map((badge, idx) => (
-                                    <div key={idx} className="badge-item">
-                                        <div className="badge-icon">🏅</div>
-                                        <div className="badge-name">{badge.name || 'Badge'}</div>
+                        {/* Badges Card */}
+                        <div className="badges-card glass-card">
+                            <h3>🏆 Achievements</h3>
+                            {profile?.badges?.length > 0 ? (
+                                <div className="badges-grid">
+                                    {profile.badges.map((badge, idx) => (
+                                        <div key={idx} className="badge-item">
+                                            <div className="badge-icon">🏅</div>
+                                            <div className="badge-name">{badge.name || 'Badge'}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="empty-state">
+                                    <p>No badges earned yet. Keep learning to unlock achievements!</p>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Progress Card */}
+                        <div className="progress-card glass-card">
+                            <h3>📈 Learning Progress</h3>
+                            <div className="progress-items">
+                                <div className="progress-item">
+                                    <div className="progress-header">
+                                        <span>Topics Mastery</span>
+                                        <span>{stats?.topicsCompleted || 0} completed</span>
                                     </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="empty-state">
-                                <p>No badges earned yet. Keep learning to unlock achievements!</p>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Progress Card */}
-                    <div className="progress-card glass-card">
-                        <h3>📈 Learning Progress</h3>
-                        <div className="progress-items">
-                            <div className="progress-item">
-                                <div className="progress-header">
-                                    <span>Topics Mastery</span>
-                                    <span>{stats?.topicsCompleted || 0} completed</span>
+                                    <div className="progress-bar">
+                                        <div
+                                            className="progress-fill"
+                                            style={{ width: `${Math.min((stats?.topicsCompleted || 0) * 10, 100)}%` }}
+                                        ></div>
+                                    </div>
                                 </div>
-                                <div className="progress-bar">
-                                    <div
-                                        className="progress-fill"
-                                        style={{ width: `${Math.min((stats?.topicsCompleted || 0) * 10, 100)}%` }}
-                                    ></div>
-                                </div>
-                            </div>
-                            <div className="progress-item">
-                                <div className="progress-header">
-                                    <span>Problem Solving</span>
-                                    <span>{stats?.questionsCompleted || 0} solved</span>
-                                </div>
-                                <div className="progress-bar">
-                                    <div
-                                        className="progress-fill"
-                                        style={{ width: `${Math.min((stats?.questionsCompleted || 0) * 5, 100)}%` }}
-                                    ></div>
+                                <div className="progress-item">
+                                    <div className="progress-header">
+                                        <span>Problem Solving</span>
+                                        <span>{stats?.questionsCompleted || 0} solved</span>
+                                    </div>
+                                    <div className="progress-bar">
+                                        <div
+                                            className="progress-fill"
+                                            style={{ width: `${Math.min((stats?.questionsCompleted || 0) * 5, 100)}%` }}
+                                        ></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

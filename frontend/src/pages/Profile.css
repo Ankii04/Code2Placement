@@ -23,7 +23,14 @@
 
 .profile-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: 350px 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.profile-right-column {
+    display: flex;
+    flex-direction: column;
     gap: 2rem;
 }
 
@@ -364,7 +371,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
     .profile-grid {
         grid-template-columns: 1fr;
     }
