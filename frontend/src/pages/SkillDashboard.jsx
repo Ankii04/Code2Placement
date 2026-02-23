@@ -132,7 +132,7 @@ const SkillDashboard = () => {
                 </div>
 
                 {/* Radar Chart */}
-                <h3 style={{ marginBottom: '1.5rem', textAlign: 'center' }}>Topic-wise Performance</h3>
+                <h3 style={{ marginBottom: '1.5rem' }}>Topic-wise Performance</h3>
                 <div style={{ background: 'var(--bg-secondary)', borderRadius: 'var(--radius-lg)', padding: '1rem', border: '1px solid var(--border-color)' }}>
                     <ResponsiveContainer width="100%" height={400}>
                         <RadarChart data={radarData}>
