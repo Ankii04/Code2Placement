@@ -71,13 +71,13 @@ const SkillDashboard = () => {
             </div>
 
             {/* Overall DSA Score */}
-            <div className="glass-card" style={{ padding: '2rem', marginBottom: '2rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <div className="glass-card" style={{ marginBottom: '2rem' }}>
+                <div className="score-header">
                     <div>
                         <h2>DSA Overall Score</h2>
-                        <p style={{ color: 'var(--text-secondary)' }}>Based on {dsaScore?.problemsSolved || 0} problems solved</p>
+                        <p>Based on {dsaScore?.problemsSolved || 0} problems solved</p>
                     </div>
-                    <div style={{ textAlign: 'center' }}>
+                    <div className="score-display">
                         <div style={{
                             fontSize: '3rem',
                             fontWeight: '800',
@@ -85,110 +85,122 @@ const SkillDashboard = () => {
                         }}>
                             {dsaScore?.overall || 0}
                         </div>
-                        <div style={{ color: 'var(--text-secondary)' }}>out of 100</div>
+                        <div style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>out of 100</div>
                     </div>
                 </div>
 
                 {/* Strengths and Weaknesses */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '2rem' }}>
+                <div className="strengths-weaknesses-grid">
                     <div>
-                        <h3 style={{ color: '#10b981', marginBottom: '1rem' }}>💪 Strengths</h3>
+                        <h3 style={{ color: 'var(--success)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <span style={{ fontSize: '1.2em' }}>💪</span> Strengths
+                        </h3>
                         {dsaScore?.strengths?.length > 0 ? (
-                            <ul style={{ listStyle: 'none', padding: 0 }}>
+                            <ul className="sw-list">
                                 {dsaScore.strengths.map((topic, idx) => (
-                                    <li key={idx} style={{ padding: '0.5rem 0' }}>
-                                        ✓ {topic.charAt(0).toUpperCase() + topic.slice(1)}
+                                    <li key={idx} className="sw-item">
+                                        <span className="sw-icon success">✓</span>
+                                        {topic.charAt(0).toUpperCase() + topic.slice(1).replace(/([A-Z])/g, ' $1')}
                                     </li>
                                 ))}
                             </ul>
                         ) : (
-                            <p style={{ color: 'var(--text-secondary)' }}>Solve more problems to identify strengths</p>
+                            <div className="sw-list" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
+                                Solve more problems to identify strengths
+                            </div>
                         )}
                     </div>
                     <div>
-                        <h3 style={{ color: '#ef4444', marginBottom: '1rem' }}>⚠️ Weaknesses</h3>
+                        <h3 style={{ color: 'var(--error)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <span style={{ fontSize: '1.2em' }}>⚠️</span> Weaknesses
+                        </h3>
                         {dsaScore?.weaknesses?.length > 0 ? (
-                            <ul style={{ listStyle: 'none', padding: 0 }}>
+                            <ul className="sw-list">
                                 {dsaScore.weaknesses.map((topic, idx) => (
-                                    <li key={idx} style={{ padding: '0.5rem 0' }}>
-                                        ✗ {topic.charAt(0).toUpperCase() + topic.slice(1)}
+                                    <li key={idx} className="sw-item">
+                                        <span className="sw-icon error">✗</span>
+                                        {topic.charAt(0).toUpperCase() + topic.slice(1).replace(/([A-Z])/g, ' $1')}
                                     </li>
                                 ))}
                             </ul>
                         ) : (
-                            <p style={{ color: 'var(--text-secondary)' }}>Great! No weak areas identified</p>
+                            <div className="sw-list" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
+                                Great! No weak areas identified
+                            </div>
                         )}
                     </div>
                 </div>
 
                 {/* Radar Chart */}
-                <h3 style={{ marginBottom: '1rem' }}>Topic-wise Performance</h3>
-                <ResponsiveContainer width="100%" height={400}>
-                    <RadarChart data={radarData}>
-                        <PolarGrid stroke="var(--border-color)" />
-                        <PolarAngleAxis dataKey="topic" tick={{ fill: 'var(--text-primary)', fontSize: 12 }} />
-                        <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: 'var(--text-secondary)' }} />
-                        <Radar name="Score" dataKey="score" stroke="#6366f1" fill="#6366f1" fillOpacity={0.6} />
-                        <Tooltip contentStyle={{ background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }} />
-                    </RadarChart>
-                </ResponsiveContainer>
+                <h3 style={{ marginBottom: '1.5rem', textAlign: 'center' }}>Topic-wise Performance</h3>
+                <div style={{ background: 'var(--bg-secondary)', borderRadius: 'var(--radius-lg)', padding: '1rem', border: '1px solid var(--border-color)' }}>
+                    <ResponsiveContainer width="100%" height={400}>
+                        <RadarChart data={radarData}>
+                            <PolarGrid stroke="var(--border-color)" />
+                            <PolarAngleAxis dataKey="topic" tick={{ fill: 'var(--text-primary)', fontSize: 12 }} />
+                            <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: 'var(--text-secondary)' }} />
+                            <Radar name="Score" dataKey="score" stroke="var(--primary-color)" fill="var(--primary-color)" fillOpacity={0.6} />
+                            <Tooltip contentStyle={{ background: 'var(--bg-primary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', color: 'var(--text-primary)' }} />
+                        </RadarChart>
+                    </ResponsiveContainer>
+                </div>
             </div>
 
             {/* Company Readiness */}
-            <div className="glass-card" style={{ padding: '2rem' }}>
+            <div className="glass-card">
                 <h2 style={{ marginBottom: '2rem' }}>Company Readiness</h2>
 
                 {/* Bar Chart */}
-                <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={barData}>
-                        <XAxis dataKey="name" tick={{ fill: 'var(--text-primary)' }} />
-                        <YAxis domain={[0, 100]} tick={{ fill: 'var(--text-secondary)' }} />
-                        <Tooltip contentStyle={{ background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }} />
-                        <Legend />
-                        <Bar dataKey="score" fill="#6366f1" radius={[8, 8, 0, 0]} />
-                    </BarChart>
-                </ResponsiveContainer>
+                <div style={{ background: 'var(--bg-secondary)', borderRadius: 'var(--radius-lg)', padding: '1.5rem 1rem 1rem 0', marginBottom: '3rem', border: '1px solid var(--border-color)' }}>
+                    <ResponsiveContainer width="100%" height={300}>
+                        <BarChart data={barData}>
+                            <XAxis dataKey="name" tick={{ fill: 'var(--text-primary)' }} />
+                            <YAxis domain={[0, 100]} tick={{ fill: 'var(--text-secondary)' }} />
+                            <Tooltip contentStyle={{ background: 'var(--bg-primary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)' }} cursor={{ fill: 'var(--bg-tertiary)' }} />
+                            <Legend wrapperStyle={{ paddingTop: '10px' }} />
+                            <Bar dataKey="score" fill="var(--primary-500)" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
 
                 {/* Detailed Breakdown */}
-                <div style={{ marginTop: '2rem' }}>
+                <div className="company-breakdown-list">
                     {readiness.map(company => (
-                        <div key={company.name} className="company-card" style={{ marginBottom: '1.5rem', padding: '1.5rem', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-lg)' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                        <div key={company.name} className="company-card">
+                            <div className="company-card-header">
                                 <h3>{company.name}</h3>
-                                <div style={{
-                                    fontSize: '1.5rem',
-                                    fontWeight: '700',
-                                    color: getScoreColor(company.readinessScore)
-                                }}>
+                                <div className="company-score" style={{ color: getScoreColor(company.readinessScore) }}>
                                     {company.readinessScore}%
                                 </div>
                             </div>
 
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginBottom: '1rem' }}>
-                                <div>
-                                    <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>DSA</div>
-                                    <div style={{ fontWeight: '600' }}>{company.breakdown.dsa}</div>
+                            <div className="company-breakdown-grid">
+                                <div className="metric-item">
+                                    <div className="metric-label">DSA</div>
+                                    <div className="metric-value">{company.breakdown.dsa}</div>
                                 </div>
-                                <div>
-                                    <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>CS Fundamentals</div>
-                                    <div style={{ fontWeight: '600' }}>{company.breakdown.cs}</div>
+                                <div className="metric-item">
+                                    <div className="metric-label">CS Fundamentals</div>
+                                    <div className="metric-value">{company.breakdown.cs}</div>
                                 </div>
-                                <div>
-                                    <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Resume</div>
-                                    <div style={{ fontWeight: '600' }}>{company.breakdown.resume}</div>
+                                <div className="metric-item">
+                                    <div className="metric-label">Resume</div>
+                                    <div className="metric-value">{company.breakdown.resume}</div>
                                 </div>
-                                <div>
-                                    <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Interview</div>
-                                    <div style={{ fontWeight: '600' }}>{company.breakdown.interview}</div>
+                                <div className="metric-item">
+                                    <div className="metric-label">Interview</div>
+                                    <div className="metric-value">{company.breakdown.interview}</div>
                                 </div>
                             </div>
 
                             {company.recommendations && company.recommendations.length > 0 && (
-                                <div>
-                                    <div style={{ fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>Recommendations:</div>
-                                    <ul style={{ margin: 0, paddingLeft: '1.5rem', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                                <div style={{ background: 'var(--bg-primary)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                                    <div style={{ fontSize: '0.9rem', fontWeight: '600', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--primary-600)' }}>
+                                        <span>💡</span> Recommendations
+                                    </div>
+                                    <ul style={{ margin: 0, paddingLeft: '1.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
                                         {company.recommendations.map((rec, idx) => (
-                                            <li key={idx}>{rec}</li>
+                                            <li key={idx} style={{ marginBottom: '0.25rem' }}>{rec}</li>
                                         ))}
                                     </ul>
                                 </div>
