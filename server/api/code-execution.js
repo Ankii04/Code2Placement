@@ -174,7 +174,8 @@ router.post('/test', async (req, res) => {
  */
 router.post('/submit', protect, async (req, res) => {
     try {
-        const { code, language, questionId } = req.body;
+        const { code, language } = req.body;
+        const questionId = req.body.questionId?.toString().trim();
         const userId = req.user?.id;
 
         if (!code || !language || !questionId) {
@@ -189,7 +190,7 @@ router.post('/submit', protect, async (req, res) => {
         if (!question) {
             return res.status(404).json({
                 success: false,
-                error: 'Question not found'
+                error: `Question not found (ID: ${questionId})`
             });
         }
 
