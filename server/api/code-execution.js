@@ -1,5 +1,6 @@
 import express from 'express';
 import axios from 'axios';
+import mongoose from 'mongoose';
 import Question from '../models/Question.js';
 import UserProgress from '../models/UserProgress.js';
 import { protect } from '../middleware/auth.middleware.js';
@@ -178,6 +179,8 @@ router.post('/submit', protect, async (req, res) => {
         const questionId = req.body.questionId?.toString().trim();
         const userId = req.user?.id;
 
+        console.log(`Submission attempt: User=${userId}, QuestionID=${questionId}, Lang=${language}`);
+
         if (!code || !language || !questionId) {
             return res.status(400).json({
                 success: false,
@@ -185,12 +188,26 @@ router.post('/submit', protect, async (req, res) => {
             });
         }
 
-        // Get question with test cases
-        const question = await Question.findById(questionId);
+        // Try getting question with test cases
+        let question = await Question.findById(questionId);
+
+        // Fallback: If not found by model, try direct collection query (sometimes helps in serverless)
+        if (!question && mongoose.connection.readyState === 1) {
+            console.log('Question not found by model, trying direct collection query...');
+            const directQuestion = await mongoose.connection.db.collection('questions').findOne({
+                _id: new mongoose.Types.ObjectId(questionId)
+            });
+            if (directQuestion) {
+                console.log('Found question via direct collection query!');
+                question = directQuestion;
+            }
+        }
+
         if (!question) {
+            console.error(`ERROR: Question not found. ID provided: ${questionId}`);
             return res.status(404).json({
                 success: false,
-                error: `Question not found (ID: ${questionId})`
+                error: `Question not found (ID: ${questionId}). Please refresh the page and try again.`
             });
         }
 
