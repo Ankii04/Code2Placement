@@ -6,83 +6,56 @@ import { protect } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
-// Piston API (Free, No API Key Required)
-const PISTON_API = 'https://emkc.org/api/v2/piston';
+// CodeX API (Free Public API)
+const CODEX_API = 'https://api.codex.jaagrav.in';
 
-// Language mapping for Piston
-const PISTON_LANGUAGES = {
-    'javascript': { language: 'javascript', version: '18.15.0' },
-    'python': { language: 'python', version: '3.10.0' },
-    'java': { language: 'java', version: '15.0.2' },
-    'cpp': { language: 'c++', version: '10.2.0' },
-    'c': { language: 'c', version: '10.2.0' }
+// Language mapping for CodeX
+const CODEX_LANGUAGES = {
+    'javascript': 'js',
+    'python': 'py',
+    'java': 'java',
+    'cpp': 'cpp',
+    'c': 'c'
 };
 
 /**
- * Execute code using Piston API (Free)
+ * Execute code using CodeX API (Free)
  */
 async function executeCode(code, language, input = '') {
     try {
-        const langConfig = PISTON_LANGUAGES[language];
-        if (!langConfig) {
+        const codexLang = CODEX_LANGUAGES[language];
+        if (!codexLang) {
             throw new Error(`Unsupported language: ${language}`);
         }
 
-        // Determine file name based on language
-        const fileNames = {
-            'javascript': 'main.js',
-            'python': 'main.py',
-            'java': 'Main.java',
-            'cpp': 'main.cpp',
-            'c': 'main.c'
-        };
-
-        const response = await axios.post(`${PISTON_API}/execute`, {
-            language: langConfig.language,
-            version: langConfig.version,
-            files: [{
-                name: fileNames[language] || 'main.txt',
-                content: code
-            }],
-            stdin: input,
-            args: [],
-            compile_timeout: 10000,
-            run_timeout: 3000,
-            compile_memory_limit: -1,
-            run_memory_limit: -1
+        const response = await axios.post(CODEX_API, {
+            code: code,
+            language: codexLang,
+            input: input
         });
 
         const result = response.data;
 
-        // Check for compilation errors
-        if (result.compile && result.compile.code !== 0) {
+        // CodeX returns status 200 even for compilation errors, but includes actual error content
+        if (result.error) {
             return {
                 success: false,
-                error: result.compile.stderr || result.compile.output || 'Compilation error',
-                status: 'Compilation Error'
-            };
-        }
-
-        // Check for runtime errors
-        if (result.run && result.run.code !== 0 && result.run.signal) {
-            return {
-                success: false,
-                error: result.run.stderr || result.run.output || 'Runtime error',
-                status: 'Runtime Error'
+                error: result.error,
+                status: 'Error'
             };
         }
 
         // Success
         return {
             success: true,
-            output: result.run?.stdout || result.run?.output || '',
-            error: result.run?.stderr || null,
+            output: result.output || '',
+            error: null,
             status: 'Completed'
         };
 
     } catch (error) {
         console.error('Code execution error:', error.response?.data || error.message);
-        const errorMsg = error.response?.data?.message || error.message || 'Piston API execution failed';
+        const errorMsg = error.response?.data?.error || error.message || 'CodeX API execution failed';
         throw new Error(`Code execution failed: ${errorMsg}`);
     }
 }
