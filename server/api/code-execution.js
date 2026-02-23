@@ -6,41 +6,45 @@ import { protect } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
-// CodeX API (Free Public API)
-const CODEX_API = 'https://api.codex.jaagrav.in';
+// Wandbox API (Free Public API - Very Stable)
+const WANDBOX_API = 'https://wandbox.org/api/compile.json';
 
-// Language mapping for CodeX
-const CODEX_LANGUAGES = {
-    'javascript': 'js',
-    'python': 'py',
-    'java': 'java',
-    'cpp': 'cpp',
-    'c': 'c'
+// Language mapping for Wandbox
+const WANDBOX_LANGUAGES = {
+    'javascript': 'nodejs-head',
+    'python': 'python-head',
+    'java': 'openjdk-head',
+    'cpp': 'gcc-head',
+    'c': 'gcc-head'
 };
 
 /**
- * Execute code using CodeX API (Free)
+ * Execute code using Wandbox API (Free)
  */
 async function executeCode(code, language, input = '') {
     try {
-        const codexLang = CODEX_LANGUAGES[language];
-        if (!codexLang) {
+        const wandboxLang = WANDBOX_LANGUAGES[language];
+        if (!wandboxLang) {
             throw new Error(`Unsupported language: ${language}`);
         }
 
-        const response = await axios.post(CODEX_API, {
+        const response = await axios.post(WANDBOX_API, {
+            compiler: wandboxLang,
             code: code,
-            language: codexLang,
-            input: input
+            stdin: input,
+            save: false
         });
 
         const result = response.data;
 
-        // CodeX returns status 200 even for compilation errors, but includes actual error content
-        if (result.error) {
+        // Wandbox returns status 0 for success, non-zero for errors
+        // program_error and compiler_error contain the respective error outputs
+        const error = result.program_error || result.compiler_error || result.signal;
+
+        if (result.status !== "0" || error) {
             return {
                 success: false,
-                error: result.error,
+                error: error || 'Execution failed',
                 status: 'Error'
             };
         }
@@ -48,14 +52,14 @@ async function executeCode(code, language, input = '') {
         // Success
         return {
             success: true,
-            output: result.output || '',
+            output: result.program_output || '',
             error: null,
             status: 'Completed'
         };
 
     } catch (error) {
         console.error('Code execution error:', error.response?.data || error.message);
-        const errorMsg = error.response?.data?.error || error.message || 'CodeX API execution failed';
+        const errorMsg = error.response?.data?.error || error.message || 'Wandbox API execution failed';
         throw new Error(`Code execution failed: ${errorMsg}`);
     }
 }
