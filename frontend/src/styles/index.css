@@ -456,6 +456,52 @@ a:hover {
   box-shadow: var(--shadow-xl);
 }
 
+/* ========================================
+   FORM UTILITIES
+   ======================================== */
+
+.radio-group {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--text-primary);
+  user-select: none;
+}
+
+.radio-group input[type="radio"] {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--primary-color);
+  cursor: pointer;
+  margin: 0;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  justify-content: flex-end;
+}
+
+.form-actions button {
+  min-width: 120px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+}
+
+.form-actions.full-width button {
+  flex: 1;
+}
+
 /* Responsive Utilities */
 @media (max-width: 768px) {
   html {

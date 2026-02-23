@@ -228,8 +228,8 @@ const ManageTopics = () => {
                             {/* Topic Type Selection */}
                             <div className="input-group">
                                 <label className="input-label">Topic Type *</label>
-                                <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-                                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                                <div className="radio-group">
+                                    <label>
                                         <input
                                             type="radio"
                                             checked={isMainCategory}
@@ -237,7 +237,7 @@ const ManageTopics = () => {
                                         />
                                         <span>Main Topic</span>
                                     </label>
-                                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                                    <label>
                                         <input
                                             type="radio"
                                             checked={!isMainCategory}
@@ -331,15 +331,14 @@ const ManageTopics = () => {
                                 <small>Lower numbers appear first</small>
                             </div>
 
-                            <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
-                                <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>
+                            <div className="form-actions full-width">
+                                <button type="submit" className="btn btn-primary">
                                     {editingTopic ? 'Update' : 'Create'}
                                 </button>
                                 <button
                                     type="button"
                                     onClick={handleCloseModal}
                                     className="btn btn-secondary"
-                                    style={{ flex: 1 }}
                                 >
                                     Cancel
                                 </button>
