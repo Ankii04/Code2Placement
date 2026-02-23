@@ -322,19 +322,7 @@
     cursor: not-allowed;
 }
 
-/* Scrollbar */
-.bottom-content::-webkit-scrollbar {
-    width: 6px;
-}
-
-.bottom-content::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
-}
-
-.bottom-content::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
-    border-radius: 3px;
-}
+/* Global scrollbar rules apply */
 
 /* Responsive */
 @media (max-width: 768px) {

@@ -140,6 +140,8 @@
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-tertiary) transparent;
 }
 
 body {
@@ -154,21 +156,21 @@ body {
 
 /* Scrollbar Styling */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--primary-500);
+  background: var(--text-tertiary);
   border-radius: var(--radius-full);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-600);
+  background: var(--primary-500);
 }
 
 /* ========================================

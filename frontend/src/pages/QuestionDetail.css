@@ -243,19 +243,7 @@
     flex-direction: column;
 }
 
-/* Scrollbar Styling */
-.problem-panel::-webkit-scrollbar {
-    width: 6px;
-}
-
-.problem-panel::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
-}
-
-.problem-panel::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
-    border-radius: 3px;
-}
+/* Global scrollbar rules apply */
 
 /* Responsive Design */
 @media (max-width: 1024px) {

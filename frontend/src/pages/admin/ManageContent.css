@@ -150,19 +150,7 @@
     overflow-y: auto;
 }
 
-/* Scrollbar for form */
-.content-form::-webkit-scrollbar {
-    width: 8px;
-}
-
-.content-form::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
-}
-
-.content-form::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
-    border-radius: 4px;
-}
+/* Global scrollbar rules apply */
 
 /* Responsive */
 @media (max-width: 768px) {
