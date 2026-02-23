@@ -82,7 +82,8 @@ async function executeCode(code, language, input = '') {
 
     } catch (error) {
         console.error('Code execution error:', error.response?.data || error.message);
-        throw new Error('Code execution failed');
+        const errorMsg = error.response?.data?.message || error.message || 'Piston API execution failed';
+        throw new Error(`Code execution failed: ${errorMsg}`);
     }
 }
 

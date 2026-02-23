@@ -159,7 +159,7 @@ const QuestionDetail = () => {
                                 {showSolution && (
                                     <div className="solution-box">
                                         <h3>Solution</h3>
-                                        <pre><code>{question.solution}</code></pre>
+                                        <pre><code>{question.solution.code || question.solution}</code></pre>
                                     </div>
                                 )}
                             </section>

@@ -8,8 +8,7 @@
     flex-direction: column;
     background: var(--bg-primary);
     overflow: hidden;
-    padding-top: 60px;
-    /* Account for navbar */
+    padding-top: 0;
 }
 
 /* Header - Very Compact */

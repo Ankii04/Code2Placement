@@ -57,7 +57,7 @@ const AppContent = () => {
 
     return (
         <div className="app">
-            <Navbar />
+            {!isCodingPage && <Navbar />}
             <main className="main-content">
                 <Suspense fallback={<PageLoader />}>
                     <Routes>
