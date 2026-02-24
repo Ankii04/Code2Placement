@@ -1354,23 +1354,23 @@ async function seedCompleteContent() {
             });
 
             if (subtopic) {
-                // Delete existing questions for this subtopic
-                await Question.deleteMany({ topic: subtopic._id });
-
-                // Create new questions
+                // Keep track of IDs we updated or created to clean up orphans if needed
+                // But for now, we just update/upsert all questions from the script
                 for (const questionData of questions) {
-                    await Question.create({
-                        ...questionData,
-                        topic: subtopic._id
-                    });
+                    await Question.findOneAndUpdate(
+                        { title: questionData.title, topic: subtopic._id },
+                        { ...questionData, topic: subtopic._id },
+                        { upsert: true, new: true, setDefaultsOnInsert: true }
+                    );
                     questionsCreated++;
                 }
 
-                // Update question count
-                subtopic.questionCount = questions.length;
+                // Update question count for topics
+                const actualCount = await Question.countDocuments({ topic: subtopic._id });
+                subtopic.questionCount = actualCount;
                 await subtopic.save();
 
-                console.log(`📝 Added ${questions.length} questions to "${subtopicTitle}"`);
+                console.log(`📝 Synced ${questions.length} questions to "${subtopicTitle}"`);
             }
         }
 

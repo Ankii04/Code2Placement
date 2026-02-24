@@ -109,8 +109,24 @@ router.post('/test', async (req, res) => {
         // Try getting question for driver code if questionId is provided
         let finalCode = code;
         if (questionId) {
-            const question = await Question.findById(questionId);
-            if (question && question.driverCode && question.driverCode[language]) {
+            let question = await Question.findById(questionId);
+
+            // Fallback for serverless
+            if (!question && mongoose.connection.readyState === 1) {
+                const directQuestion = await mongoose.connection.db.collection('questions').findOne({
+                    _id: new mongoose.Types.ObjectId(questionId)
+                });
+                if (directQuestion) question = directQuestion;
+            }
+
+            if (!question) {
+                return res.status(404).json({
+                    success: false,
+                    error: `Question not found (ID: ${questionId}). Please refresh the page and try again.`
+                });
+            }
+
+            if (question.driverCode && question.driverCode[language]) {
                 const driver = question.driverCode[language];
                 if (driver.includes('// --- USER CODE ---')) {
                     finalCode = driver.replace('// --- USER CODE ---', code);
