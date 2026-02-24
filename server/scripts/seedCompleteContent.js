@@ -840,8 +840,8 @@ Output: -1
             difficulty: 'EASY',
             starterCode: {
                 cpp: `class Solution {\npublic:\n    int findMax(vector<int>& arr) {\n        \n    }\n};`,
-                python: `class Solution:\n    def findMax(self, arr):\n        `,
-                javascript: `class Solution {\n    findMax(arr) {\n        \n    }\n}`
+                python: `class Solution:\n    def findMax(self, arr: List[int]) -> int:\n        `,
+                javascript: `/**\n * @param {number[]} arr\n * @return {number}\n */\nclass Solution {\n    findMax(arr) {\n        \n    }\n}`
             },
             driverCode: {
                 ...LeetCodeUtils.cppVectorDriver('Solution', 'findMax'),
@@ -884,8 +884,8 @@ Output: [20, 10]
             difficulty: 'EASY',
             starterCode: {
                 cpp: `class Solution {\npublic:\n    void reverseArray(vector<int>& arr) {\n        \n    }\n};`,
-                python: `class Solution:\n    def reverseArray(self, arr):\n        `,
-                javascript: `class Solution {\n    reverseArray(arr) {\n        \n    }\n}`
+                python: `class Solution:\n    def reverseArray(self, arr: List[int]) -> None:\n        `,
+                javascript: `/**\n * @param {number[]} arr\n * @return {void} Modify arr in-place\n */\nclass Solution {\n    reverseArray(arr) {\n        \n    }\n}`
             },
             driverCode: {
                 ...LeetCodeUtils.cppVectorDriver('Solution', 'reverseArray', 'void'),
@@ -928,8 +928,8 @@ Output: -1
             difficulty: 'EASY',
             starterCode: {
                 cpp: `class Solution {\npublic:\n    int linearSearch(vector<int>& arr, int target) {\n        \n    }\n};`,
-                python: `class Solution:\n    def linearSearch(self, arr, target):\n        `,
-                javascript: `class Solution {\n    linearSearch(arr, target) {\n        \n    }\n}`
+                python: `class Solution:\n    def linearSearch(self, arr: List[int], target: int) -> int:\n        `,
+                javascript: `/**\n * @param {number[]} arr\n * @param {number} target\n * @return {number}\n */\nclass Solution {\n    linearSearch(arr, target) {\n        \n    }\n}`
             },
             driverCode: {
                 cpp: `#include <iostream>\n#include <vector>\nusing namespace std;\n\n// --- USER CODE ---\n\nint main() {\n    int n; if(!(cin >> n)) return 0;\n    vector<int> arr(n); for(int i=0; i<n; i++) cin >> arr[i];\n    int target; cin >> target;\n    Solution sol;\n    cout << sol.linearSearch(arr, target) << endl;\n    return 0;\n}`,
@@ -972,8 +972,8 @@ Output: Even: 4, Odd: 0
             difficulty: 'EASY',
             starterCode: {
                 cpp: `class Solution {\npublic:\n    pair<int, int> countEvenOdd(vector<int>& arr) {\n        \n    }\n};`,
-                python: `class Solution:\n    def countEvenOdd(self, arr):\n        `,
-                javascript: `class Solution {\n    countEvenOdd(arr) {\n        \n    }\n}`
+                python: `class Solution:\n    def countEvenOdd(self, arr: List[int]) -> Tuple[int, int]:\n        `,
+                javascript: `/**\n * @param {number[]} arr\n * @return {{even: number, odd: number}}\n */\nclass Solution {\n    countEvenOdd(arr) {\n        \n    }\n}`
             },
             driverCode: {
                 cpp: `#include <iostream>\n#include <vector>\nusing namespace std;\n\n// --- USER CODE ---\n\nint main() {\n    int n;\n    if (!(cin >> n)) return 0;\n    vector<int> arr(n);\n    for(int i=0; i<n; i++) cin >> arr[i];\n    Solution sol;\n    pair<int, int> res = sol.countEvenOdd(arr);\n    cout << "Even: " << res.first << ", Odd: " << res.second << endl;\n    return 0;\n}`,
@@ -1016,8 +1016,8 @@ Output: -6
             difficulty: 'EASY',
             starterCode: {
                 cpp: `class Solution {\npublic:\n    long long arraySum(vector<int>& arr) {\n        \n    }\n};`,
-                python: `class Solution:\n    def arraySum(self, arr):\n        `,
-                javascript: `class Solution {\n    arraySum(arr) {\n        \n    }\n}`
+                python: `class Solution:\n    def arraySum(self, arr: List[int]) -> int:\n        `,
+                javascript: `/**\n * @param {number[]} arr\n * @return {number}\n */\nclass Solution {\n    arraySum(arr) {\n        \n    }\n}`
             },
             driverCode: {
                 ...LeetCodeUtils.cppVectorDriver('Solution', 'arraySum'),
@@ -1065,7 +1065,7 @@ Output: [0, 1]
             starterCode: {
                 cpp: `class Solution {\npublic:\n    vector<int> twoSum(vector<int>& arr, int target) {\n        \n    }\n};`,
                 python: `class Solution:\n    def twoSum(self, arr: List[int], target: int) -> List[int]:\n        `,
-                javascript: `class Solution {\n    twoSum(arr, target) {\n        \n    }\n}`
+                javascript: `/**\n * @param {number[]} arr\n * @param {number} target\n * @return {number[]}\n */\nclass Solution {\n    twoSum(arr, target) {\n        \n    }\n}`
             },
             driverCode: {
                 cpp: `#include <iostream>\n#include <vector>\nusing namespace std;\n\n// --- USER CODE ---\n\nint main() {\n    int n; if(!(cin >> n)) return 0;\n    vector<int> arr(n); for(int i=0; i<n; i++) cin >> arr[i];\n    int target; cin >> target;\n    Solution sol;\n    vector<int> res = sol.twoSum(arr, target);\n    cout << "[" << res[0] << ", " << res[1] << "]" << endl;\n    return 0;\n}`,
@@ -1109,8 +1109,8 @@ Output: 5, arr = [0, 1, 2, 3, 4, _, _, _, _, _]
             difficulty: 'EASY',
             starterCode: {
                 cpp: `class Solution {\npublic:\n    int removeDuplicates(vector<int>& arr) {\n        \n    }\n};`,
-                python: `class Solution:\n    def removeDuplicates(self, arr):\n        `,
-                javascript: `class Solution {\n    removeDuplicates(arr) {\n        \n    }\n}`
+                python: `class Solution:\n    def removeDuplicates(self, arr: List[int]) -> int:\n        `,
+                javascript: `/**\n * @param {number[]} arr\n * @return {number}\n */\nclass Solution {\n    removeDuplicates(arr) {\n        \n    }\n}`
             },
             driverCode: {
                 ...LeetCodeUtils.cppVectorDriver('Solution', 'removeDuplicates'),
@@ -1154,8 +1154,8 @@ Output: [1, 0, 0]
             difficulty: 'EASY',
             starterCode: {
                 cpp: `class Solution {\npublic:\n    void moveZeroes(vector<int>& nums) {\n        \n    }\n};`,
-                python: `class Solution:\n    def moveZeroes(self, nums):\n        `,
-                javascript: `class Solution {\n    moveZeroes(nums) {\n        \n    }\n}`
+                python: `class Solution:\n    def moveZeroes(self, nums: List[int]) -> None:\n        `,
+                javascript: `/**\n * @param {number[]} nums\n * @return {void} Do not return anything, modify nums in-place instead.\n */\nclass Solution {\n    moveZeroes(nums) {\n        \n    }\n}`
             },
             driverCode: {
                 ...LeetCodeUtils.cppVectorDriver('Solution', 'moveZeroes', 'void'),
@@ -1200,7 +1200,7 @@ Output: false
             starterCode: {
                 cpp: `class Solution {\npublic:\n    bool isPalindrome(string s) {\n        \n    }\n};`,
                 python: `class Solution:\n    def isPalindrome(self, s: str) -> bool:\n        `,
-                javascript: `class Solution {\n    isPalindrome(s) {\n        \n    }\n}`
+                javascript: `/**\n * @param {string} s\n * @return {boolean}\n */\nclass Solution {\n    isPalindrome(s) {\n        \n    }\n}`
             },
             driverCode: {
                 cpp: `#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\n// --- USER CODE ---\n\nint main() {\n    string s;\n    getline(cin, s);\n    // Remove quotes if present at ends\n    if (s.length() >= 2 && s[0] == '"' && s[s.length()-1] == '"') {\n        s = s.substr(1, s.length()-2);\n    }\n    Solution sol;\n    cout << (sol.isPalindrome(s) ? "true" : "false") << endl;\n    return 0;\n}`,
@@ -1245,7 +1245,7 @@ Output: 1
             starterCode: {
                 cpp: `class Solution {\npublic:\n    int maxArea(vector<int>& height) {\n        \n    }\n};`,
                 python: `class Solution:\n    def maxArea(self, height: List[int]) -> int:\n        `,
-                javascript: `class Solution {\n    maxArea(height) {\n        \n    }\n}`
+                javascript: `/**\n * @param {number[]} height\n * @return {number}\n */\nclass Solution {\n    maxArea(height) {\n        \n    }\n}`
             },
             driverCode: {
                 ...LeetCodeUtils.cppVectorDriver('Solution', 'maxArea'),
@@ -1291,8 +1291,8 @@ Output: 7
             difficulty: 'EASY',
             starterCode: {
                 cpp: `class Solution {\npublic:\n    int maxSumSubarray(vector<int>& arr, int k) {\n        \n    }\n};`,
-                python: `class Solution:\n    def maxSumSubarray(self, arr, k):\n        `,
-                javascript: `class Solution {\n    maxSumSubarray(arr, k) {\n        \n    }\n}`
+                python: `class Solution:\n    def maxSumSubarray(self, arr: List[int], k: int) -> int:\n        `,
+                javascript: `/**\n * @param {number[]} arr\n * @param {number} k\n * @return {number}\n */\nclass Solution {\n    maxSumSubarray(arr, k) {\n        \n    }\n}`
             },
             driverCode: {
                 cpp: `#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n// --- USER CODE ---\n\nint main() {\n    int n; cin >> n;\n    vector<int> arr(n); for(int i=0; i<n; i++) cin >> arr[i];\n    int k; cin >> k;\n    Solution sol;\n    cout << sol.maxSumSubarray(arr, k) << endl;\n    return 0;\n}`,

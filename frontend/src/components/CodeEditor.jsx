@@ -51,9 +51,6 @@ const CodeEditor = ({ question, onSubmit }) => {
     // Handle language change
     const handleLanguageChange = (newLang) => {
         setLanguage(newLang);
-        setCode(getDefaultCode(newLang));
-        setOutput('');
-        setTestResults([]);
         setShowLangDropdown(false);
     };
 
