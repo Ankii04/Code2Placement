@@ -12,13 +12,28 @@ const questionSchema = new mongoose.Schema({
     },
     difficulty: {
         type: String,
-        enum: ['EASY', 'MEDIUM', 'HARD'],
+        enum: ['EASY', 'MEDIUM', 'HARD', 'Easy', 'Medium', 'Hard'],
         required: true
     },
     topic: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Topic',
         required: true
+    },
+    // LeetCode-style fields
+    starterCode: {
+        javascript: String,
+        python: String,
+        java: String,
+        cpp: String,
+        c: String
+    },
+    driverCode: {
+        javascript: String,
+        python: String,
+        java: String,
+        cpp: String,
+        c: String
     },
     // Striver-style external links
     leetcodeLink: String,

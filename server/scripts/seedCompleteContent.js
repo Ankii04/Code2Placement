@@ -12,9 +12,66 @@ import Topic from '../models/Topic.js';
 import Question from '../models/Question.js';
 
 // Complete content for ALL subtopics with C++ code
+const LeetCodeUtils = {
+    // Generate C++ driver that reads vector from stdin
+    cppVectorDriver: (className, funcName, returnType = 'int') => ({
+        cpp: `#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <climits>
+using namespace std;
+
+// --- USER CODE ---
+
+int main() {
+    int n;
+    if (!(cin >> n)) return 0;
+    vector<int> arr(n);
+    for(int i=0; i<n; i++) cin >> arr[i];
+    Solution sol;
+    ${returnType === 'void' ? `sol.${funcName}(arr);` : `cout << sol.${funcName}(arr) << endl;`}
+    ${returnType === 'void' ? `for(int i=0; i<arr.size(); i++) cout << arr[i] << (i==arr.size()-1 ? "" : " "); cout << endl;` : ''}
+    return 0;
+}`
+    }),
+
+    // Generate Python driver
+    pythonVectorDriver: (funcName, returnType = 'int') => ({
+        py: `import sys
+
+# --- USER CODE ---
+
+if __name__ == "__main__":
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        exit()
+    n = int(input_data[0])
+    arr = [int(x) for x in input_data[1:n+1]]
+    sol = Solution()
+    ${returnType === 'void' ? `sol.${funcName}(arr)\n    print(" ".join(map(str, arr)))` : `print(sol.${funcName}(arr))`}
+`
+    }),
+
+    // Generate JS driver
+    jsVectorDriver: (funcName, returnType = 'int') => ({
+        js: `const fs = require('fs');
+const input = fs.readFileSync(0, 'utf8').trim().split(/\\s+/);
+if (!input[0]) process.exit(0);
+
+// --- USER CODE ---
+
+const n = parseInt(input[0]);
+const arr = input.slice(1, n + 1).map(Number);
+const sol = new Solution();
+${returnType === 'void' ? `sol.${funcName}(arr);\nconsole.log(arr.join(" "));` : `console.log(sol.${funcName}(arr));`}
+`
+    })
+};
+
 const completeSubtopicContent = {
     // ==================== ARRAY SUBTOPICS ====================
-    'Array Basics': {
+    'Array Rotation & Reversal': {
         content: `# Array Basics - Complete Guide
 
 ## What is an Array?
@@ -764,11 +821,11 @@ for (int right = 0; right < n; right++) {
 
 // Questions for each subtopic (5 per subtopic)
 const subtopicQuestions = {
-    'Array Basics': [
+    'Array Rotation & Reversal': [
         {
             title: 'Find Maximum Element in Array',
             description: `Given an array of integers, find and return the maximum element.
-
+            
 **Example 1:**
 Input: arr = [3, 1, 4, 1, 5, 9, 2, 6]
 Output: 9
@@ -781,6 +838,16 @@ Output: -1
 → 1 ≤ arr.length ≤ 10⁵
 → -10⁹ ≤ arr[i] ≤ 10⁹`,
             difficulty: 'EASY',
+            starterCode: {
+                cpp: `class Solution {\npublic:\n    int findMax(vector<int>& arr) {\n        \n    }\n};`,
+                python: `class Solution:\n    def findMax(self, arr):\n        `,
+                javascript: `class Solution {\n    findMax(arr) {\n        \n    }\n}`
+            },
+            driverCode: {
+                ...LeetCodeUtils.cppVectorDriver('Solution', 'findMax'),
+                ...LeetCodeUtils.pythonVectorDriver('findMax'),
+                ...LeetCodeUtils.jsVectorDriver('findMax')
+            },
             hints: [
                 'Initialize max with first element',
                 'Compare each element with current max',
@@ -788,33 +855,12 @@ Output: -1
             ],
             solution: {
                 approach: 'Linear scan through array, maintaining maximum value seen so far',
-                code: `#include <iostream>
-#include <vector>
-#include <climits>
-using namespace std;
-
-int findMax(vector<int>& arr) {
-    if (arr.empty()) return INT_MIN;
-    
-    int maxVal = arr[0];
-    for (int i = 1; i < arr.size(); i++) {
-        if (arr[i] > maxVal) {
-            maxVal = arr[i];
-        }
-    }
-    return maxVal;
-}
-
-int main() {
-    vector<int> arr = {3, 1, 4, 1, 5, 9, 2, 6};
-    cout << "Maximum: " << findMax(arr) << endl;
-    return 0;
-}`,
+                code: `class Solution {\npublic:\n    int findMax(vector<int>& arr) {\n        int maxVal = arr[0];\n        for(int x : arr) {\n            if(x > maxVal) maxVal = x;\n        }\n        return maxVal;\n    }\n};`,
                 explanation: 'We iterate through array once, comparing each element with current maximum and updating when we find larger value. Time: O(n), Space: O(1)'
             },
             testCases: [
-                { input: '[3, 1, 4, 1, 5, 9]', expectedOutput: '9' },
-                { input: '[-5, -2, -8]', expectedOutput: '-2' },
+                { input: '[3, 1, 4, 1, 5, 9, 2, 6]', expectedOutput: '9' },
+                { input: '[-5, -2, -8, -1]', expectedOutput: '-1' },
                 { input: '[42]', expectedOutput: '42' }
             ],
             tags: ['array', 'linear-search', 'basics'],
@@ -823,7 +869,7 @@ int main() {
         {
             title: 'Reverse an Array',
             description: `Reverse the given array in-place.
-
+            
 **Example 1:**
 Input: arr = [1, 2, 3, 4, 5]
 Output: [5, 4, 3, 2, 1]
@@ -836,6 +882,16 @@ Output: [20, 10]
 → 1 ≤ arr.length ≤ 10⁵
 → Solve in-place with O(1) extra space`,
             difficulty: 'EASY',
+            starterCode: {
+                cpp: `class Solution {\npublic:\n    void reverseArray(vector<int>& arr) {\n        \n    }\n};`,
+                python: `class Solution:\n    def reverseArray(self, arr):\n        `,
+                javascript: `class Solution {\n    reverseArray(arr) {\n        \n    }\n}`
+            },
+            driverCode: {
+                ...LeetCodeUtils.cppVectorDriver('Solution', 'reverseArray', 'void'),
+                ...LeetCodeUtils.pythonVectorDriver('reverseArray', 'void'),
+                ...LeetCodeUtils.jsVectorDriver('reverseArray', 'void')
+            },
             hints: [
                 'Use two pointers from both ends',
                 'Swap elements and move pointers inward',
@@ -843,37 +899,13 @@ Output: [20, 10]
             ],
             solution: {
                 approach: 'Two pointers technique - swap elements from both ends moving toward center',
-                code: `#include <iostream>
-#include <vector>
-#include <algorithm>
-using namespace std;
-
-void reverseArray(vector<int>& arr) {
-    int left = 0;
-    int right = arr.size() - 1;
-    
-    while (left < right) {
-        swap(arr[left], arr[right]);
-        left++;
-        right--;
-    }
-}
-
-int main() {
-    vector<int> arr = {1, 2, 3, 4, 5};
-    reverseArray(arr);
-    
-    for (int x : arr) {
-        cout << x << " ";
-    }
-    return 0;
-}`,
+                code: `class Solution {\npublic:\n    void reverseArray(vector<int>& arr) {\n        int left = 0, right = arr.size() - 1;\n        while (left < right) {\n            swap(arr[left++], arr[right--]);\n        }\n    }\n};`,
                 explanation: 'Use two pointers starting from both ends, swap elements and move pointers inward until they meet. Time: O(n), Space: O(1)'
             },
             testCases: [
-                { input: '[1, 2, 3, 4, 5]', expectedOutput: '[5, 4, 3, 2, 1]' },
-                { input: '[10, 20]', expectedOutput: '[20, 10]' },
-                { input: '[7]', expectedOutput: '[7]' }
+                { input: '[1, 2, 3, 4, 5]', expectedOutput: '5 4 3 2 1' },
+                { input: '[10, 20]', expectedOutput: '20 10' },
+                { input: '[7]', expectedOutput: '7' }
             ],
             tags: ['array', 'two-pointers', 'in-place'],
             companies: ['Amazon', 'Facebook', 'Apple']
@@ -881,7 +913,7 @@ int main() {
         {
             title: 'Search Element in Array',
             description: `Find the index of target element in array. Return -1 if not found.
-
+            
 **Example 1:**
 Input: arr = [4, 2, 7, 1, 9], target = 7
 Output: 2
@@ -894,6 +926,16 @@ Output: -1
 → 1 ≤ arr.length ≤ 10⁵
 → -10⁹ ≤ arr[i], target ≤ 10⁹`,
             difficulty: 'EASY',
+            starterCode: {
+                cpp: `class Solution {\npublic:\n    int linearSearch(vector<int>& arr, int target) {\n        \n    }\n};`,
+                python: `class Solution:\n    def linearSearch(self, arr, target):\n        `,
+                javascript: `class Solution {\n    linearSearch(arr, target) {\n        \n    }\n}`
+            },
+            driverCode: {
+                cpp: `#include <iostream>\n#include <vector>\nusing namespace std;\n\n// --- USER CODE ---\n\nint main() {\n    int n; if(!(cin >> n)) return 0;\n    vector<int> arr(n); for(int i=0; i<n; i++) cin >> arr[i];\n    int target; cin >> target;\n    Solution sol;\n    cout << sol.linearSearch(arr, target) << endl;\n    return 0;\n}`,
+                py: `import sys\n\n# --- USER CODE ---\n\nif __name__ == "__main__":\n    input_data = sys.stdin.read().split()\n    if not input_data: exit()\n    n = int(input_data[0])\n    arr = [int(x) for x in input_data[1:n+1]]\n    target = int(input_data[n+1])\n    sol = Solution()\n    print(sol.linearSearch(arr, target))`,
+                js: `const fs = require('fs');\nconst input = fs.readFileSync(0, 'utf8').trim().split(/\\s+/);\nif (!input[0]) process.exit(0);\n\n// --- USER CODE ---\n\nconst n = parseInt(input[0]);\nconst arr = input.slice(1, n + 1).map(Number);\nconst target = parseInt(input[n+1]);\nconst sol = new Solution();\nconsole.log(sol.linearSearch(arr, target));`
+            },
             hints: [
                 'Check each element sequentially',
                 'Return index when element matches target',
@@ -901,30 +943,12 @@ Output: -1
             ],
             solution: {
                 approach: 'Linear search - check each element until target is found',
-                code: `#include <iostream>
-#include <vector>
-using namespace std;
-
-int linearSearch(vector<int>& arr, int target) {
-    for (int i = 0; i < arr.size(); i++) {
-        if (arr[i] == target) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-int main() {
-    vector<int> arr = {4, 2, 7, 1, 9};
-    int target = 7;
-    cout << "Index: " << linearSearch(arr, target) << endl;
-    return 0;
-}`,
+                code: `class Solution {\npublic:\n    int linearSearch(vector<int>& arr, int target) {\n        for (int i = 0; i < arr.size(); i++) {\n            if (arr[i] == target)\n                return i;\n        }\n        return -1;\n    }\n};`,
                 explanation: 'Iterate through array checking each element. Return index when found, -1 if not found. Time: O(n), Space: O(1)'
             },
             testCases: [
-                { input: 'arr=[4,2,7,1,9], target=7', expectedOutput: '2' },
-                { input: 'arr=[1,2,3], target=5', expectedOutput: '-1' },
+                { input: 'arr=[4, 2, 7, 1, 9], target=7', expectedOutput: '2' },
+                { input: 'arr=[1, 2, 3], target=5', expectedOutput: '-1' },
                 { input: 'arr=[10], target=10', expectedOutput: '0' }
             ],
             tags: ['array', 'search', 'linear-search'],
@@ -1173,7 +1197,7 @@ int main() {
         {
             title: 'Move Zeros to End',
             description: `Move all zeros to the end while maintaining relative order of non-zero elements.
-
+            
 **Example 1:**
 Input: arr = [0, 1, 0, 3, 12]
 Output: [1, 3, 12, 0, 0]
@@ -1187,6 +1211,16 @@ Output: [1, 0, 0]
 → Maintain relative order
 → 1 ≤ arr.length ≤ 10⁴`,
             difficulty: 'EASY',
+            starterCode: {
+                cpp: `class Solution {\npublic:\n    void moveZeroes(vector<int>& nums) {\n        \n    }\n};`,
+                python: `class Solution:\n    def moveZeroes(self, nums):\n        `,
+                javascript: `class Solution {\n    moveZeroes(nums) {\n        \n    }\n}`
+            },
+            driverCode: {
+                ...LeetCodeUtils.cppVectorDriver('Solution', 'moveZeroes', 'void'),
+                ...LeetCodeUtils.pythonVectorDriver('moveZeroes', 'void'),
+                ...LeetCodeUtils.jsVectorDriver('moveZeroes', 'void')
+            },
             hints: [
                 'Use slow pointer for non-zero position',
                 'Swap non-zero elements to front',
@@ -1194,37 +1228,13 @@ Output: [1, 0, 0]
             ],
             solution: {
                 approach: 'Two pointers - slow for non-zero position, fast to scan',
-                code: `#include <iostream>
-#include <vector>
-#include <algorithm>
-using namespace std;
-
-void moveZeros(vector<int>& arr) {
-    int slow = 0;  // Position for next non-zero
-    
-    for (int fast = 0; fast < arr.size(); fast++) {
-        if (arr[fast] != 0) {
-            swap(arr[slow], arr[fast]);
-            slow++;
-        }
-    }
-}
-
-int main() {
-    vector<int> arr = {0, 1, 0, 3, 12};
-    moveZeros(arr);
-    
-    for (int x : arr) {
-        cout << x << " ";
-    }
-    return 0;
-}`,
+                code: `class Solution {\npublic:\n    void moveZeroes(vector<int>& nums) {\n        int slow = 0;\n        for (int fast = 0; fast < nums.size(); fast++) {\n            if (nums[fast] != 0) {\n                swap(nums[slow++], nums[fast]);\n            }\n        }\n    }\n};`,
                 explanation: 'Slow pointer tracks position for next non-zero element. When non-zero found, swap with slow position and increment slow. This moves all non-zeros to front, zeros to end. Time: O(n), Space: O(1)'
             },
             testCases: [
-                { input: '[0, 1, 0, 3, 12]', expectedOutput: '[1, 3, 12, 0, 0]' },
-                { input: '[0, 0, 1]', expectedOutput: '[1, 0, 0]' },
-                { input: '[1, 2, 3]', expectedOutput: '[1, 2, 3]' }
+                { input: '[0, 1, 0, 3, 12]', expectedOutput: '1 3 12 0 0' },
+                { input: '[0, 0, 1]', expectedOutput: '1 0 0' },
+                { input: '[1, 2, 3]', expectedOutput: '1 2 3' }
             ],
             tags: ['array', 'two-pointers', 'in-place'],
             companies: ['Facebook', 'Amazon', 'Apple']
@@ -1232,7 +1242,7 @@ int main() {
         {
             title: 'Valid Palindrome',
             description: `Check if string is a palindrome, considering only alphanumeric characters and ignoring case.
-
+            
 **Example 1:**
 Input: s = "A man, a plan, a canal: Panama"
 Output: true
@@ -1246,6 +1256,16 @@ Output: false
 → Consider only alphanumeric characters
 → Ignore case`,
             difficulty: 'EASY',
+            starterCode: {
+                cpp: `class Solution {\npublic:\n    bool isPalindrome(string s) {\n        \n    }\n};`,
+                python: `class Solution:\n    def isPalindrome(self, s: str) -> bool:\n        `,
+                javascript: `class Solution {\n    isPalindrome(s) {\n        \n    }\n}`
+            },
+            driverCode: {
+                cpp: `#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\n// --- USER CODE ---\n\nint main() {\n    string s;\n    getline(cin, s);\n    // Remove quotes if present at ends\n    if (s.length() >= 2 && s[0] == '"' && s[s.length()-1] == '"') {\n        s = s.substr(1, s.length()-2);\n    }\n    Solution sol;\n    cout << (sol.isPalindrome(s) ? "true" : "false") << endl;\n    return 0;\n}`,
+                py: `import sys\n\n# --- USER CODE ---\n\nif __name__ == "__main__":\n    s = sys.stdin.read().strip()\n    if s.startswith('"') and s.endswith('"'): s = s[1:-1]\n    sol = Solution()\n    print("true" if sol.isPalindrome(s) else "false")`,
+                js: `const fs = require('fs');\nlet s = fs.readFileSync(0, 'utf8').trim();\nif (s.startsWith('"') && s.endsWith('"')) s = s.slice(1, -1);\n\n// --- USER CODE ---\n\nconst sol = new Solution();\nconsole.log(sol.isPalindrome(s) ? "true" : "false");`
+            },
             hints: [
                 'Use two pointers from both ends',
                 'Skip non-alphanumeric characters',
@@ -1253,43 +1273,7 @@ Output: false
             ],
             solution: {
                 approach: 'Two pointers from opposite ends, skip non-alphanumeric, compare lowercase',
-                code: `#include <iostream>
-#include <string>
-#include <cctype>
-using namespace std;
-
-bool isPalindrome(string s) {
-    int left = 0;
-    int right = s.length() - 1;
-    
-    while (left < right) {
-        // Skip non-alphanumeric from left
-        while (left < right && !isalnum(s[left])) {
-            left++;
-        }
-        
-        // Skip non-alphanumeric from right
-        while (left < right && !isalnum(s[right])) {
-            right--;
-        }
-        
-        // Compare characters (case-insensitive)
-        if (tolower(s[left]) != tolower(s[right])) {
-            return false;
-        }
-        
-        left++;
-        right--;
-    }
-    
-    return true;
-}
-
-int main() {
-    string s = "A man, a plan, a canal: Panama";
-    cout << (isPalindrome(s) ? "true" : "false") << endl;
-    return 0;
-}`,
+                code: `class Solution {\npublic:\n    bool isPalindrome(string s) {\n        int left = 0, right = s.length() - 1;\n        while (left < right) {\n            while (left < right && !isalnum(s[left])) left++;\n            while (left < right && !isalnum(s[right])) right--;\n            if (tolower(s[left++]) != tolower(s[right--])) return false;\n        }\n        return true;\n    }\n};`,
                 explanation: 'Use two pointers from both ends. Skip non-alphanumeric characters. Compare characters in lowercase. If any mismatch, return false. Time: O(n), Space: O(1)'
             },
             testCases: [
@@ -1381,7 +1365,7 @@ async function seedCompleteContent() {
         // Seed content for all subtopics
         for (const [title, content] of Object.entries(completeSubtopicContent)) {
             const subtopic = await Topic.findOne({
-                title: title,
+                title: { $regex: new RegExp(`^${title}$`, 'i') },
                 isMainCategory: false
             });
 
@@ -1400,7 +1384,7 @@ async function seedCompleteContent() {
         // Seed questions for each subtopic
         for (const [subtopicTitle, questions] of Object.entries(subtopicQuestions)) {
             const subtopic = await Topic.findOne({
-                title: subtopicTitle,
+                title: { $regex: new RegExp(`^${subtopicTitle}$`, 'i') },
                 isMainCategory: false
             });
 

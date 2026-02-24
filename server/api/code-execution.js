@@ -97,7 +97,7 @@ router.post('/execute', async (req, res) => {
  */
 router.post('/test', async (req, res) => {
     try {
-        const { code, language, testCases } = req.body;
+        const { code, language, testCases, questionId } = req.body;
 
         if (!code || !language || !testCases) {
             return res.status(400).json({
@@ -106,28 +106,52 @@ router.post('/test', async (req, res) => {
             });
         }
 
+        // Try getting question for driver code if questionId is provided
+        let finalCode = code;
+        if (questionId) {
+            const question = await Question.findById(questionId);
+            if (question && question.driverCode && question.driverCode[language]) {
+                const driver = question.driverCode[language];
+                if (driver.includes('// --- USER CODE ---')) {
+                    finalCode = driver.replace('// --- USER CODE ---', code);
+                } else {
+                    finalCode = code + '\n' + driver;
+                }
+            }
+        }
+
         const results = [];
 
         // Run against each test case (limit to 5 for performance)
         for (let i = 0; i < Math.min(testCases.length, 5); i++) {
             const testCase = testCases[i];
 
-            // Format input: If it's a bracketed array string like [1,2,3], convert to space separated "length 1 2 3"
+            // Format input: Handle formats like arr=[1,2,3], target=5
             let formattedInput = testCase.input;
-            if (typeof formattedInput === 'string' && formattedInput.trim().startsWith('[') && formattedInput.trim().endsWith(']')) {
-                try {
-                    const parsed = JSON.parse(formattedInput);
-                    if (Array.isArray(parsed)) {
-                        formattedInput = `${parsed.length}\n${parsed.join(' ')}`;
-                    }
-                } catch (e) {
-                    console.error('Input parsing failed, using raw input');
+            if (typeof formattedInput === 'string') {
+                // 1. Convert arr=[1,2,3] to "3 1 2 3"
+                formattedInput = formattedInput.replace(/(\w+)\s*=\s*\[(.*?)\]/g, (match, key, content) => {
+                    const elements = content.split(',').map(s => s.trim()).filter(s => s !== '');
+                    return `${elements.length} ${elements.join(' ')}`;
+                });
+                // 2. Convert target=5 to "5"
+                formattedInput = formattedInput.replace(/(\w+)\s*=\s*([^,\[\]]+)/g, '$2');
+                // 3. Convert pure [1,2,3] to "3 1 2 3"
+                if (formattedInput.trim().startsWith('[') && formattedInput.trim().endsWith(']')) {
+                    try {
+                        const parsed = JSON.parse(formattedInput);
+                        if (Array.isArray(parsed)) {
+                            formattedInput = `${parsed.length}\n${parsed.join(' ')}`;
+                        }
+                    } catch (e) { }
                 }
+                // 4. Clean up commas and extra spaces
+                formattedInput = formattedInput.replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
             }
 
             console.log(`Running test case ${i + 1}: Original='${testCase.input}', Formatted='${formattedInput.replace(/\n/g, ' ')}'`);
 
-            const result = await executeCode(code, language, formattedInput);
+            const result = await executeCode(finalCode, language, formattedInput);
             console.log(`Result ${i + 1} success:`, result.success);
 
             if (!result.success) {
@@ -211,25 +235,47 @@ router.post('/submit', protect, async (req, res) => {
             });
         }
 
+        // --- LeetCode Style Wrapping ---
+        let finalCode = code;
+        if (question.driverCode && question.driverCode[language]) {
+            const driver = question.driverCode[language];
+            if (driver.includes('// --- USER CODE ---')) {
+                finalCode = driver.replace('// --- USER CODE ---', code);
+            } else {
+                finalCode = code + '\n' + driver; // Fallback
+            }
+        }
+        // -------------------------------
+
         const results = [];
         let allPassed = true;
 
         // Run against all test cases
         for (const testCase of question.testCases || []) {
-            // Format input: If it's a bracketed array string like [1,2,3], convert to space separated "length 1 2 3"
+            // Format input: Handle formats like arr=[1,2,3], target=5
             let formattedInput = testCase.input;
-            if (typeof formattedInput === 'string' && formattedInput.trim().startsWith('[') && formattedInput.trim().endsWith(']')) {
-                try {
-                    const parsed = JSON.parse(formattedInput);
-                    if (Array.isArray(parsed)) {
-                        formattedInput = `${parsed.length}\n${parsed.join(' ')}`;
-                    }
-                } catch (e) {
-                    // Fallback
+            if (typeof formattedInput === 'string') {
+                // 1. Convert arr=[1,2,3] to "3 1 2 3"
+                formattedInput = formattedInput.replace(/(\w+)\s*=\s*\[(.*?)\]/g, (match, key, content) => {
+                    const elements = content.split(',').map(s => s.trim()).filter(s => s !== '');
+                    return `${elements.length} ${elements.join(' ')}`;
+                });
+                // 2. Convert target=5 to "5"
+                formattedInput = formattedInput.replace(/(\w+)\s*=\s*([^,\[\]]+)/g, '$2');
+                // 3. Convert pure [1,2,3] to "3 1 2 3"
+                if (formattedInput.trim().startsWith('[') && formattedInput.trim().endsWith(']')) {
+                    try {
+                        const parsed = JSON.parse(formattedInput);
+                        if (Array.isArray(parsed)) {
+                            formattedInput = `${parsed.length}\n${parsed.join(' ')}`;
+                        }
+                    } catch (e) { }
                 }
+                // 4. Clean up commas and extra spaces
+                formattedInput = formattedInput.replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
             }
 
-            const result = await executeCode(code, language, formattedInput);
+            const result = await executeCode(finalCode, language, formattedInput);
 
             if (!result.success) {
                 results.push({

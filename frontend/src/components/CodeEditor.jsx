@@ -20,11 +20,12 @@ const CodeEditor = ({ question, onSubmit }) => {
     // Reset code when question changes or language changes
     useEffect(() => {
         if (question) {
-            setCode(getDefaultCode(language));
+            const defaultCode = question.starterCode?.[language] || getDefaultCode(language);
+            setCode(defaultCode);
             setTestResults([]);
             setOutput('');
         }
-    }, [question?._id]);
+    }, [question?._id, language]);
 
     // Language configurations
     const languages = [
@@ -94,7 +95,8 @@ const CodeEditor = ({ question, onSubmit }) => {
                 const response = await api.post('/code/test', {
                     code,
                     language,
-                    testCases: question.testCases.slice(0, 3) // Show first 3 test cases
+                    testCases: question.testCases.slice(0, 3), // Show first 3 test cases
+                    questionId: question._id
                 });
 
                 if (response.data.success) {
