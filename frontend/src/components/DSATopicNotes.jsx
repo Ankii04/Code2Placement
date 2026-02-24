@@ -17,7 +17,7 @@ const DSATopicNotes = ({ topic }) => {
     const fetchTopicContent = async () => {
         try {
             setLoading(true);
-            const { data } = await axios.get(`/api/topic-content/${topic._id}`);
+            const { data } = await api.get(`/topic-content/${topic._id}`);
             console.log('Fetched topic content:', data);
             setTopicContent(data);
         } catch (error) {
