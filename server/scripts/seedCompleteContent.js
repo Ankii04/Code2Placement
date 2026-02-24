@@ -957,7 +957,7 @@ Output: -1
         {
             title: 'Count Even and Odd Numbers',
             description: `Count how many even and odd numbers are in the array.
-
+            
 **Example 1:**
 Input: arr = [1, 2, 3, 4, 5, 6]
 Output: Even: 3, Odd: 3
@@ -970,6 +970,16 @@ Output: Even: 4, Odd: 0
 → 1 ≤ arr.length ≤ 10⁵
 → 0 ≤ arr[i] ≤ 10⁹`,
             difficulty: 'EASY',
+            starterCode: {
+                cpp: `class Solution {\npublic:\n    pair<int, int> countEvenOdd(vector<int>& arr) {\n        \n    }\n};`,
+                python: `class Solution:\n    def countEvenOdd(self, arr):\n        `,
+                javascript: `class Solution {\n    countEvenOdd(arr) {\n        \n    }\n}`
+            },
+            driverCode: {
+                cpp: `#include <iostream>\n#include <vector>\nusing namespace std;\n\n// --- USER CODE ---\n\nint main() {\n    int n;\n    if (!(cin >> n)) return 0;\n    vector<int> arr(n);\n    for(int i=0; i<n; i++) cin >> arr[i];\n    Solution sol;\n    pair<int, int> res = sol.countEvenOdd(arr);\n    cout << "Even: " << res.first << ", Odd: " << res.second << endl;\n    return 0;\n}`,
+                py: `import sys\n\n# --- USER CODE ---\n\nif __name__ == "__main__":\n    data = sys.stdin.read().split()\n    if not data: exit()\n    n = int(data[0])\n    arr = [int(x) for x in data[1:n+1]]\n    sol = Solution()\n    even, odd = sol.countEvenOdd(arr)\n    print(f"Even: {even}, Odd: {odd}")`,
+                js: `const fs = require('fs');\nconst input = fs.readFileSync(0, 'utf8').trim().split(/\\s+/);\nif (!input[0]) process.exit(0);\n\n// --- USER CODE ---\n\nconst n = parseInt(input[0]);\nconst arr = input.slice(1, n + 1).map(Number);\nconst sol = new Solution();\nconst res = sol.countEvenOdd(arr);\nconsole.log(\`Even: \${res.even}, Odd: \${res.odd}\`);`
+            },
             hints: [
                 'Use modulo operator (%) to check if number is even',
                 'Maintain two counters',
@@ -977,30 +987,7 @@ Output: Even: 4, Odd: 0
             ],
             solution: {
                 approach: 'Iterate through array and check each number using modulo operator',
-                code: `#include <iostream>
-#include <vector>
-using namespace std;
-
-pair<int, int> countEvenOdd(vector<int>& arr) {
-    int evenCount = 0, oddCount = 0;
-    
-    for (int num : arr) {
-        if (num % 2 == 0) {
-            evenCount++;
-        } else {
-            oddCount++;
-        }
-    }
-    
-    return {evenCount, oddCount};
-}
-
-int main() {
-    vector<int> arr = {1, 2, 3, 4, 5, 6};
-    auto [even, odd] = countEvenOdd(arr);
-    cout << "Even: " << even << ", Odd: " << odd << endl;
-    return 0;
-}`,
+                code: `class Solution {\npublic:\n    pair<int, int> countEvenOdd(vector<int>& arr) {\n        int even = 0, odd = 0;\n        for(int x : arr) {\n            if(x % 2 == 0) even++;\n            else odd++;\n        }\n        return {even, odd};\n    }\n};`,
                 explanation: 'Use modulo operator to check if number is divisible by 2. Maintain separate counters. Time: O(n), Space: O(1)'
             },
             testCases: [
@@ -1014,7 +1001,7 @@ int main() {
         {
             title: 'Sum of Array Elements',
             description: `Calculate the sum of all elements in the array.
-
+            
 **Example 1:**
 Input: arr = [1, 2, 3, 4, 5]
 Output: 15
@@ -1027,6 +1014,16 @@ Output: -6
 → 1 ≤ arr.length ≤ 10⁵
 → -10⁹ ≤ arr[i] ≤ 10⁹`,
             difficulty: 'EASY',
+            starterCode: {
+                cpp: `class Solution {\npublic:\n    long long arraySum(vector<int>& arr) {\n        \n    }\n};`,
+                python: `class Solution:\n    def arraySum(self, arr):\n        `,
+                javascript: `class Solution {\n    arraySum(arr) {\n        \n    }\n}`
+            },
+            driverCode: {
+                ...LeetCodeUtils.cppVectorDriver('Solution', 'arraySum'),
+                ...LeetCodeUtils.pythonVectorDriver('arraySum'),
+                ...LeetCodeUtils.jsVectorDriver('arraySum')
+            },
             hints: [
                 'Initialize sum to 0',
                 'Add each element to sum',
@@ -1034,25 +1031,7 @@ Output: -6
             ],
             solution: {
                 approach: 'Iterate through array and accumulate sum',
-                code: `#include <iostream>
-#include <vector>
-using namespace std;
-
-long long arraySum(vector<int>& arr) {
-    long long sum = 0;
-    
-    for (int num : arr) {
-        sum += num;
-    }
-    
-    return sum;
-}
-
-int main() {
-    vector<int> arr = {1, 2, 3, 4, 5};
-    cout << "Sum: " << arraySum(arr) << endl;
-    return 0;
-}`,
+                code: `class Solution {\npublic:\n    long long arraySum(vector<int>& arr) {\n        long long sum = 0;\n        for(int x : arr) sum += x;\n        return sum;\n    }\n};`,
                 explanation: 'Initialize sum to 0 and add each element. Use long long to avoid overflow. Time: O(n), Space: O(1)'
             },
             testCases: [
@@ -1069,7 +1048,7 @@ int main() {
         {
             title: 'Two Sum - Sorted Array',
             description: `Given a sorted array and a target, find two numbers that add up to target.
-
+            
 **Example 1:**
 Input: arr = [1, 2, 3, 4, 6], target = 6
 Output: [1, 3] (indices where arr[1] + arr[3] = 2 + 4 = 6)
@@ -1083,6 +1062,16 @@ Output: [0, 1]
 → Exactly one solution exists
 → 2 ≤ arr.length ≤ 10⁴`,
             difficulty: 'EASY',
+            starterCode: {
+                cpp: `class Solution {\npublic:\n    vector<int> twoSum(vector<int>& arr, int target) {\n        \n    }\n};`,
+                python: `class Solution:\n    def twoSum(self, arr: List[int], target: int) -> List[int]:\n        `,
+                javascript: `class Solution {\n    twoSum(arr, target) {\n        \n    }\n}`
+            },
+            driverCode: {
+                cpp: `#include <iostream>\n#include <vector>\nusing namespace std;\n\n// --- USER CODE ---\n\nint main() {\n    int n; if(!(cin >> n)) return 0;\n    vector<int> arr(n); for(int i=0; i<n; i++) cin >> arr[i];\n    int target; cin >> target;\n    Solution sol;\n    vector<int> res = sol.twoSum(arr, target);\n    cout << "[" << res[0] << ", " << res[1] << "]" << endl;\n    return 0;\n}`,
+                py: `import sys\nfrom typing import List\n\n# --- USER CODE ---\n\nif __name__ == "__main__":\n    data = sys.stdin.read().split()\n    if not data: exit()\n    n = int(data[0])\n    arr = [int(x) for x in data[1:n+1]]\n    target = int(data[n+1])\n    sol = Solution()\n    res = sol.twoSum(arr, target)\n    print(f"[{res[0]}, {res[1]}]")`,
+                js: `const fs = require('fs');\nconst input = fs.readFileSync(0, 'utf8').trim().split(/\\s+/);\nif (!input[0]) process.exit(0);\n\n// --- USER CODE ---\n\nconst n = parseInt(input[0]);\nconst arr = input.slice(1, n + 1).map(Number);\nconst target = parseInt(input[n+1]);\nconst sol = new Solution();\nconst res = sol.twoSum(arr, target);\nconsole.log(\`[\${res[0]}, \${res[1]}]\`);`
+            },
             hints: [
                 'Use two pointers from both ends',
                 'If sum is too small, move left pointer right',
@@ -1090,36 +1079,7 @@ Output: [0, 1]
             ],
             solution: {
                 approach: 'Two pointers from opposite ends, adjust based on sum comparison',
-                code: `#include <iostream>
-#include <vector>
-using namespace std;
-
-vector<int> twoSum(vector<int>& arr, int target) {
-    int left = 0;
-    int right = arr.size() - 1;
-    
-    while (left < right) {
-        int sum = arr[left] + arr[right];
-        
-        if (sum == target) {
-            return {left, right};
-        } else if (sum < target) {
-            left++;   // Need larger sum
-        } else {
-            right--;  // Need smaller sum
-        }
-    }
-    
-    return {-1, -1};
-}
-
-int main() {
-    vector<int> arr = {1, 2, 3, 4, 6};
-    int target = 6;
-    vector<int> result = twoSum(arr, target);
-    cout << "[" << result[0] << ", " << result[1] << "]" << endl;
-    return 0;
-}`,
+                code: `class Solution {\npublic:\n    vector<int> twoSum(vector<int>& arr, int target) {\n        int left = 0, right = arr.size() - 1;\n        while (left < right) {\n            int sum = arr[left] + arr[right];\n            if (sum == target) return {left, right};\n            if (sum < target) left++;\n            else right--;\n        }\n        return {-1, -1};\n    }\n};`,
                 explanation: 'Use two pointers from both ends. If sum equals target, return indices. If sum is less, move left pointer right for larger value. If sum is more, move right pointer left for smaller value. Time: O(n), Space: O(1)'
             },
             testCases: [
@@ -1133,7 +1093,7 @@ int main() {
         {
             title: 'Remove Duplicates from Sorted Array',
             description: `Remove duplicates in-place from sorted array. Return new length.
-
+            
 **Example 1:**
 Input: arr = [1, 1, 2, 2, 3]
 Output: 3, arr = [1, 2, 3, _, _]
@@ -1147,6 +1107,16 @@ Output: 5, arr = [0, 1, 2, 3, 4, _, _, _, _, _]
 → Modify array in-place
 → 1 ≤ arr.length ≤ 3 × 10⁴`,
             difficulty: 'EASY',
+            starterCode: {
+                cpp: `class Solution {\npublic:\n    int removeDuplicates(vector<int>& arr) {\n        \n    }\n};`,
+                python: `class Solution:\n    def removeDuplicates(self, arr):\n        `,
+                javascript: `class Solution {\n    removeDuplicates(arr) {\n        \n    }\n}`
+            },
+            driverCode: {
+                ...LeetCodeUtils.cppVectorDriver('Solution', 'removeDuplicates'),
+                ...LeetCodeUtils.pythonVectorDriver('removeDuplicates'),
+                ...LeetCodeUtils.jsVectorDriver('removeDuplicates')
+            },
             hints: [
                 'Use slow pointer for unique elements position',
                 'Use fast pointer to scan array',
@@ -1154,36 +1124,7 @@ Output: 5, arr = [0, 1, 2, 3, 4, _, _, _, _, _]
             ],
             solution: {
                 approach: 'Fast and slow pointers - slow tracks unique position, fast scans array',
-                code: `#include <iostream>
-#include <vector>
-using namespace std;
-
-int removeDuplicates(vector<int>& arr) {
-    if (arr.empty()) return 0;
-    
-    int slow = 0;  // Position for next unique element
-    
-    for (int fast = 1; fast < arr.size(); fast++) {
-        if (arr[fast] != arr[slow]) {
-            slow++;
-            arr[slow] = arr[fast];
-        }
-    }
-    
-    return slow + 1;  // New length
-}
-
-int main() {
-    vector<int> arr = {1, 1, 2, 2, 3};
-    int newLen = removeDuplicates(arr);
-    
-    cout << "New length: " << newLen << endl;
-    cout << "Array: ";
-    for (int i = 0; i < newLen; i++) {
-        cout << arr[i] << " ";
-    }
-    return 0;
-}`,
+                code: `class Solution {\npublic:\n    int removeDuplicates(vector<int>& arr) {\n        if (arr.empty()) return 0;\n        int slow = 0;\n        for (int fast = 1; fast < arr.size(); fast++) {\n            if (arr[fast] != arr[slow]) {\n                arr[++slow] = arr[fast];\n            }\n        }\n        return slow + 1;\n    }\n};`,
                 explanation: 'Slow pointer marks position for next unique element. Fast pointer scans array. When different element found, increment slow and copy element. Time: O(n), Space: O(1)'
             },
             testCases: [
@@ -1287,7 +1228,7 @@ Output: false
         {
             title: 'Container With Most Water',
             description: `Find two lines that together with x-axis form container with maximum water.
-
+            
 **Example 1:**
 Input: height = [1, 8, 6, 2, 5, 4, 8, 3, 7]
 Output: 49
@@ -1301,6 +1242,16 @@ Output: 1
 → 2 ≤ n ≤ 10⁵
 → 0 ≤ height[i] ≤ 10⁴`,
             difficulty: 'MEDIUM',
+            starterCode: {
+                cpp: `class Solution {\npublic:\n    int maxArea(vector<int>& height) {\n        \n    }\n};`,
+                python: `class Solution:\n    def maxArea(self, height: List[int]) -> int:\n        `,
+                javascript: `class Solution {\n    maxArea(height) {\n        \n    }\n}`
+            },
+            driverCode: {
+                ...LeetCodeUtils.cppVectorDriver('Solution', 'maxArea'),
+                ...LeetCodeUtils.pythonVectorDriver('maxArea'),
+                ...LeetCodeUtils.jsVectorDriver('maxArea')
+            },
             hints: [
                 'Area = width × min(height[left], height[right])',
                 'Start with maximum width (both ends)',
@@ -1308,39 +1259,7 @@ Output: 1
             ],
             solution: {
                 approach: 'Two pointers from ends, move pointer with smaller height to potentially find larger area',
-                code: `#include <iostream>
-#include <vector>
-#include <algorithm>
-using namespace std;
-
-int maxArea(vector<int>& height) {
-    int left = 0;
-    int right = height.size() - 1;
-    int maxWater = 0;
-    
-    while (left < right) {
-        int width = right - left;
-        int h = min(height[left], height[right]);
-        int area = width * h;
-        
-        maxWater = max(maxWater, area);
-        
-        // Move pointer with smaller height
-        if (height[left] < height[right]) {
-            left++;
-        } else {
-            right--;
-        }
-    }
-    
-    return maxWater;
-}
-
-int main() {
-    vector<int> height = {1, 8, 6, 2, 5, 4, 8, 3, 7};
-    cout << "Max water: " << maxArea(height) << endl;
-    return 0;
-}`,
+                code: `class Solution {\npublic:\n    int maxArea(vector<int>& height) {\n        int left = 0, right = height.size() - 1;\n        int maxWater = 0;\n        while (left < right) {\n            int w = right - left;\n            int h = min(height[left], height[right]);\n            maxWater = max(maxWater, w * h);\n            if (height[left] < height[right]) left++;\n            else right--;\n        }\n        return maxWater;\n    }\n};`,
                 explanation: 'Start with maximum width. Calculate area = width × min(heights). Move pointer with smaller height inward (only way to potentially get larger area). Track maximum. Time: O(n), Space: O(1)'
             },
             testCases: [
@@ -1350,6 +1269,52 @@ int main() {
             ],
             tags: ['array', 'two-pointers', 'greedy'],
             companies: ['Amazon', 'Facebook', 'Google']
+        }
+    ],
+
+    'Sliding Window': [
+        {
+            title: 'Maximum Sum Subarray of Size K',
+            description: `Find the maximum sum of any contiguous subarray of size k.
+            
+**Example 1:**
+Input: arr = [2, 1, 5, 1, 3, 2], k = 3
+Output: 9
+
+**Example 2:**
+Input: arr = [2, 3, 4, 1, 5], k = 2
+Output: 7
+
+**Constraints:**
+→ 1 ≤ arr.length ≤ 10⁵
+→ 1 ≤ k ≤ arr.length`,
+            difficulty: 'EASY',
+            starterCode: {
+                cpp: `class Solution {\npublic:\n    int maxSumSubarray(vector<int>& arr, int k) {\n        \n    }\n};`,
+                python: `class Solution:\n    def maxSumSubarray(self, arr, k):\n        `,
+                javascript: `class Solution {\n    maxSumSubarray(arr, k) {\n        \n    }\n}`
+            },
+            driverCode: {
+                cpp: `#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n// --- USER CODE ---\n\nint main() {\n    int n; cin >> n;\n    vector<int> arr(n); for(int i=0; i<n; i++) cin >> arr[i];\n    int k; cin >> k;\n    Solution sol;\n    cout << sol.maxSumSubarray(arr, k) << endl;\n    return 0;\n}`,
+                py: `import sys\n\n# --- USER CODE ---\n\nif __name__ == "__main__":\n    data = sys.stdin.read().split()\n    if not data: exit()\n    n = int(data[0])\n    arr = [int(x) for x in data[1:n+1]]\n    k = int(data[n+1])\n    sol = Solution()\n    print(sol.maxSumSubarray(arr, k))`,
+                js: `const fs = require('fs');\nconst input = fs.readFileSync(0, 'utf8').trim().split(/\\s+/);\nif (!input[0]) process.exit(0);\n\n// --- USER CODE ---\n\nconst n = parseInt(input[0]);\nconst arr = input.slice(1, n + 1).map(Number);\nconst k = parseInt(input[n+1]);\nconst sol = new Solution();\nconsole.log(sol.maxSumSubarray(arr, k));`
+            },
+            hints: [
+                'Calculate the sum of the first k elements',
+                'Slide the window by adding the next element and removing the first element of the previous window',
+                'Keep track of the maximum sum seen so far'
+            ],
+            solution: {
+                approach: 'Sliding window - maintain sum of k elements, slide by one at each step',
+                code: `class Solution {\npublic:\n    int maxSumSubarray(vector<int>& arr, int k) {\n        int windowSum = 0, maxSum = 0;\n        for (int i = 0; i < k; i++) windowSum += arr[i];\n        maxSum = windowSum;\n        for (int i = k; i < arr.size(); i++) {\n            windowSum += arr[i] - arr[i-k];\n            maxSum = max(maxSum, windowSum);\n        }\n        return maxSum;\n    }\n};`,
+                explanation: 'Calculate first window sum. Then for each new element, add it and subtract the element that is no longer in the window. Time: O(n), Space: O(1)'
+            },
+            testCases: [
+                { input: 'arr=[2, 1, 5, 1, 3, 2], k=3', expectedOutput: '9' },
+                { input: 'arr=[2, 3, 4, 1, 5], k=2', expectedOutput: '7' }
+            ],
+            tags: ['array', 'sliding-window'],
+            companies: ['Amazon', 'Google']
         }
     ]
 };
