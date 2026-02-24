@@ -494,66 +494,488 @@ queue.enqueue("Task 1");
 queue.enqueue("Task 2");
 console.log("Processing:", queue.dequeue());
 console.log("Next up:", queue.front());`
-                        }
-                    };
+                        },
+                        'Prefix Sum': {
+                            explanation: 'Prefix Sum involves precomputing the cumulative sum of elements in an array. This allows answering range sum queries in O(1) time after an O(n) preprocessing step.',
+                            code: `function rangeSum(arr, queries) {
+  // Precompute prefix sums
+  let prefix = new Array(arr.length + 1).fill(0);
+  for(let i = 0; i < arr.length; i++) {
+    prefix[i+1] = prefix[i] + arr[i];
+  }
+  
+  // Answer queries in O(1)
+  for(let [left, right] of queries) {
+    let sum = prefix[right + 1] - prefix[left];
+    console.log(\`Sum from index \${left} to \${right}: \${sum}\`);
+  }
+}
 
-                    const defaultCode = `// Try Yourself: ${title}\nfunction practice() {\n  console.log("Practicing ${title}...");\n  // Add your logic here\n}\n\npractice();`;
+rangeSum([1, 2, 3, 4, 5], [[0, 2], [1, 4]]);`
+                        },
+                        'Kadane\\'s Algorithm': {
+                            explanation: 'Kadane\\'s Algorithm is an elegant dynamic programming technique used to find the maximum sum of a contiguous subarray in an array with a time complexity of O(n).',
+                            code: `function maxSubArraySum(arr) {
+  let maxSoFar = arr[0];
+  let currMax = arr[0];
+  
+  for(let i = 1; i < arr.length; i++) {
+    currMax = Math.max(arr[i], currMax + arr[i]);
+    maxSoFar = Math.max(maxSoFar, currMax);
+  }
+  return maxSoFar;
+}
 
-                    const data = specificContent[title] || {
-                        explanation: `${title} is an important concept in ${category}. ${description}`,
-                        code: defaultCode
-                    };
+const arr = [-2, 1, -3, 4, -1, 2, 1, -5, 4];
+console.log("Max subarray sum:", maxSubArraySum(arr));`
+                },
+                'Array Rotation & Reversal': {
+                    explanation: 'Array rotation shifts elements by a certain number of positions. Reversal is often used as a helper operation to achieve rotation in O(n) time and O(1) extra space.',
+                        code: `function reverse(arr, start, end) {
+  while(start < end) {
+    [arr[start], arr[end]] = [arr[end], arr[start]];
+    start++; end--;
+  }
+}
 
-                    return data;
-                };
+function rotateArray(arr, k) {
+  k = k % arr.length;
+  if(k < 0) k += arr.length; // Handle negative k
+  
+  reverse(arr, 0, arr.length - 1);
+  reverse(arr, 0, k - 1);
+  reverse(arr, k, arr.length - 1);
+  return arr;
+}
 
-                const topicData = generateTopicContent(topic.title, topic.category, topic.description);
+let nums = [1, 2, 3, 4, 5, 6, 7];
+console.log("Rotated by 3:", rotateArray(nums, 3));`
+                },
+                'Pattern Searching': {
+                    explanation: 'Pattern searching involves finding all occurrences of a smaller string (pattern) within a larger string (text). The naive approach is O(n*m).',
+                        code: `function naiveSearch(text, pattern) {
+  let n = text.length;
+  let m = pattern.length;
+  let found = [];
+  
+  for(let i = 0; i <= n - m; i++) {
+    let match = true;
+    for(let j = 0; j < m; j++) {
+      if(text[i + j] !== pattern[j]) {
+        match = false;
+        break;
+      }
+    }
+    if(match) found.push(i);
+  }
+  return found;
+}
 
-                await TopicContent.create({
-                    topic: topic._id,
-                    title: topic.title,
-                    description: topic.description,
-                    concept: {
-                        explanation: topicData.explanation,
-                        keyPoints: [
-                            `Understanding ${topic.title} is crucial for mastering ${topic.category}`,
-                            'Practice with various examples to build intuition',
-                            'Focus on time and space complexity analysis',
-                            'Learn common patterns and edge cases'
-                        ],
-                        timeComplexity: topic.timeComplexity || 'Varies',
-                        spaceComplexity: topic.spaceComplexity || 'Varies'
-                    },
-                    tips: [
-                        `Start with simple examples of ${topic.title}`,
-                        'Draw diagrams to visualize the concept',
-                        'Practice coding implementations',
-                        'Solve related LeetCode/GeeksforGeeks problems'
-                    ],
-                    commonPatterns: [
-                        {
-                            name: `Try Yourself: ${topic.title}`,
-                            description: `Here is a sample code snippet for ${topic.title}. Modify it and run it to see the output.`,
-                            language: 'javascript',
-                            example: topicData.code
-                        }
-                    ]
-                });
-                subtopicContentCreated++;
-                console.log(`📝 Added basic content for subtopic: ${topic.title} `);
-            }
+console.log("Found at indices:", naiveSearch("ABABDABACDABABCABAB", "ABABCABAB"));`
+                },
+                'String Matching (KMP, Rabin-Karp)': {
+                    explanation: 'KMP and Rabin-Karp algorithms optimize pattern matching. KMP avoids unnecessary comparisons by precomputing an array (LPS). Rabin-Karp uses hashing.',
+                        code: `// Simple string hashing (Rabin-Karp concept)
+function hashMatch(text, pattern) {
+  // Simplified concept: compare hash values instead of characters directly
+  // Real implementation requires prime modulus and base calculations
+  console.log(\`Searching for '\${pattern}' in '\${text}'...\`);
+  
+  // Using built-in for simplicity of demonstration
+  let index = text.indexOf(pattern);
+  if (index !== -1) {
+    console.log("Pattern matched at index:", index);
+  } else {
+    console.log("No match found");
+  }
+}
+
+hashMatch("hello algorithm world", "algorithm");`
+                },
+                'Palindromes': {
+                    explanation: 'A palindrome is a string that reads the same forwards and backwards. Checking for a palindrome is a common introductory Two Pointers problem.',
+                        code: `function isPalindrome(str) {
+  // Clean string: remove non-alphanumeric and to lowercase
+  str = str.replace(/[^A-Za-z0-9]/g, '').toLowerCase();
+  
+  let left = 0;
+  let right = str.length - 1;
+  
+  while(left < right) {
+    if(str[left] !== str[right]) return false;
+    left++; right--;
+  }
+  return true;
+}
+
+console.log("race a car:", isPalindrome("race a car"));
+console.log("A man, a plan, a canal: Panama:", isPalindrome("A man, a plan, a canal: Panama"));`
+                },
+                'Anagrams': {
+                    explanation: 'Two strings are anagrams if they contain the same characters with the same frequencies, just possibly in a different order.',
+                        code: `function areAnagrams(str1, str2) {
+  if (str1.length !== str2.length) return false;
+  
+  const count = {};
+  for(let char of str1) {
+    count[char] = (count[char] || 0) + 1;
+  }
+  
+  for(let char of str2) {
+    if(!count[char]) return false;
+    count[char]--;
+  }
+  return true;
+}
+
+console.log("listen & silent:", areAnagrams("listen", "silent"));
+console.log("hello & world:", areAnagrams("hello", "world"));`
+                },
+                'String Hashing': {
+                    explanation: 'String Hashing converts a string into an integer. It serves as a building block for algorithms like Rabin-Karp to quickly compare strings.',
+                        code: `function simplePolynomialHash(str) {
+  const p = 31;
+  const m = 1e9 + 9;
+  let hashValue = 0;
+  let p_pow = 1;
+  
+  for(let i = 0; i < str.length; i++) {
+    let code = str.charCodeAt(i) - 96; // 'a' is 1
+    hashValue = (hashValue + code * p_pow) % m;
+    p_pow = (p_pow * p) % m;
+  }
+  return hashValue;
+}
+
+console.log("Hash of 'abc':", simplePolynomialHash("abc"));`
+                },
+                'Doubly Linked List': {
+                    explanation: 'A Doubly Linked List is a linked list where each node contains two pointers: one to the next node and one to the previous node. This allows traversal in both directions.',
+                        code: `class DLLNode {
+  constructor(data) {
+    this.data = data;
+    this.next = null;
+    this.prev = null;
+  }
+}
+
+const head = new DLLNode(1);
+const second = new DLLNode(2);
+const third = new DLLNode(3);
+
+head.next = second; second.prev = head;
+second.next = third; third.prev = second;
+
+console.log("Traversing backwards from tail:");
+let curr = third;
+while(curr) {
+  console.log(curr.data);
+  curr = curr.prev;
+}`
+                },
+                'Fast & Slow Pointers': {
+                    explanation: 'Also known as Floyd\\'s Cycle - Finding Algorithm or the Tortoise and Hare algorithm.It uses two pointers moving at different speeds to detect cycles or find the middle of a linked list.',
+                    code: `class Node {
+  constructor(data) { this.data = data; this.next = null; }
+}
+
+function findMiddle(head) {
+  let slow = head, fast = head;
+  while(fast !== null && fast.next !== null) {
+    slow = slow.next;         // moves 1 step
+    fast = fast.next.next;    // moves 2 steps
+  }
+  return slow.data;
+}
+
+const head = new Node(1);
+head.next = new Node(2); head.next.next = new Node(3);
+head.next.next.next = new Node(4); // List: 1->2->3->4
+console.log("Middle of list:", findMiddle(head));`
+                },
+                'Merge Linked Lists': {
+                    explanation: 'Merging two or more sorted linked lists involves combining them into a single sorted linked list, typically using a dummy head node to simplify edge cases.',
+                        code: `class Node {
+  constructor(data) { this.data = data; this.next = null; }
+}
+
+function mergeTwoLists(l1, l2) {
+  let dummy = new Node(0);
+  let tail = dummy;
+  
+  while(l1 !== null && l2 !== null) {
+    if(l1.data < l2.data) {
+      tail.next = l1; l1 = l1.next;
+    } else {
+      tail.next = l2; l2 = l2.next;
+    }
+    tail = tail.next;
+  }
+  if(l1) tail.next = l1;
+  if(l2) tail.next = l2;
+  return dummy.next;
+}
+
+let l1 = new Node(1); l1.next = new Node(3);
+let l2 = new Node(2); l2.next = new Node(4);
+let merged = mergeTwoLists(l1, l2);
+console.log("Merged list:", merged.data, "->", merged.next.data, "->", merged.next.next.data);`
+                },
+                'Next Greater Element': {
+                    explanation: 'Using a Monotonic Stack to repeatedly pop elements smaller than the current element allows you to find the Next Greater Element for all items in O(n) time.',
+                        code: `function nextGreaterElements(arr) {
+  const result = new Array(arr.length).fill(-1);
+  const stack = []; // Stores indices
+  
+  for(let i = 0; i < arr.length; i++) {
+    // While stack is not empty and current element is greater than element at stack top
+    while(stack.length > 0 && arr[i] > arr[stack[stack.length - 1]]) {
+      let idx = stack.pop();
+      result[idx] = arr[i];
+    }
+    stack.push(i);
+  }
+  return result;
+}
+
+const arr = [4, 5, 2, 10, 8];
+console.log("Array:", arr);
+console.log("Next greater:", nextGreaterElements(arr));`
+                },
+                'Balanced Parentheses': {
+                    explanation: 'Using a Stack is the classic approach to verify if a string has balanced brackets. We push opening brackets and pop when we encounter closing brackets, checking for a match.',
+                        code: `function isValid(s) {
+  const stack = [];
+  const map = { ')': '(', '}': '{', ']': '[' };
+  
+  for(let char of s) {
+    if(char === '(' || char === '{' || char === '[') {
+      stack.push(char);
+    } else {
+      if(stack.pop() !== map[char]) return false;
+    }
+  }
+  return stack.length === 0;
+}
+
+console.log("Is '{[()]}' valid?", isValid("{[()]}"));
+console.log("Is '{[(])}' valid?", isValid("{[(])}"));`
+                },
+                'Infix-Prefix-Postfix Conversion': {
+                    explanation: 'Stacks are vital for compiling languages, particularly in parsing expressions from human-readable human-readable Infix (A+B) notation to Postfix (AB+) or Prefix (+AB) which computers evaluate easily.',
+                        code: `function evaluatePostfix(exp) {
+  const stack = [];
+  
+  for(let char of exp) {
+    if(!isNaN(parseInt(char))) {
+      stack.push(parseInt(char));
+    } else {
+      let val1 = stack.pop();
+      let val2 = stack.pop();
+      switch(char) {
+        case '+': stack.push(val2 + val1); break;
+        case '-': stack.push(val2 - val1); break;
+        case '*': stack.push(val2 * val1); break;
+        case '/': stack.push(Math.floor(val2 / val1)); break;
+      }
+    }
+  }
+  return stack.pop();
+}
+
+console.log("Postfix '231*+9-' equals:", evaluatePostfix("231*+9-"));`
+                },
+                'Monotonic Stack': {
+                    explanation: 'A monotonic stack is a stack whose elements are monotonically increasing or decreasing. It simplifies finding bounds (like left/right smaller elements) efficiently.',
+                        code: `// Daily Temperatures: find how many days to wait for a warmer temperature
+function dailyTemperatures(temps) {
+  let ans = new Array(temps.length).fill(0);
+  let stack = [];
+  
+  for(let i = 0; i < temps.length; i++) {
+    while(stack.length && temps[i] > temps[stack[stack.length - 1]]) {
+      let prevIdx = stack.pop();
+      ans[prevIdx] = i - prevIdx;
+    }
+    stack.push(i);
+  }
+  return ans;
+}
+
+console.log("Temperatures [73,74,75,71,69,72,76,73]:");
+console.log("Wait days:", dailyTemperatures([73,74,75,71,69,72,76,73]));`
+                },
+                'Circular Queue': {
+                    explanation: 'A Circular Queue uses a fixed-size array where the front and rear pointers wrap around using modulo arithmetic. This avoids wasting space.',
+                        code: `class CircularQueue {
+  constructor(k) {
+    this.queue = new Array(k);
+    this.head = -1; this.tail = -1; this.size = k;
+  }
+  
+  enQueue(value) {
+    if(this.isFull()) return false;
+    if(this.isEmpty()) this.head = 0;
+    this.tail = (this.tail + 1) % this.size;
+    this.queue[this.tail] = value;
+    return true;
+  }
+  
+  deQueue() {
+    if(this.isEmpty()) return false;
+    if(this.head === this.tail) { this.head = -1; this.tail = -1; }
+    else this.head = (this.head + 1) % this.size;
+    return true;
+  }
+  
+  isEmpty() { return this.head === -1; }
+  isFull() { return ((this.tail + 1) % this.size) === this.head; }
+}
+
+const cq = new CircularQueue(3);
+console.log("Enqueue 1:", cq.enQueue(1));
+console.log("Enqueue 2:", cq.enQueue(2));
+console.log("Enqueue 3:", cq.enQueue(3));
+console.log("Enqueue 4 (full):", cq.enQueue(4));`
+                },
+                'Deque': {
+                    explanation: 'A Deque (Double Ended Queue) allows insertion and deletion at both ends. It functions as both a stack and a queue.',
+                        code: `// Basic Deque
+class Deque {
+  constructor() { this.items = []; }
+  
+  addFront(item) { this.items.unshift(item); }
+  addRear(item) { this.items.push(item); }
+  removeFront() { return this.items.shift(); }
+  removeRear() { return this.items.pop(); }
+  getFront() { return this.items[0]; }
+  getRear() { return this.items[this.items.length - 1]; }
+}
+
+const d = new Deque();
+d.addRear(10);
+d.addFront(5);
+d.addRear(15);
+console.log("Current Deque Array:", d.items);
+console.log("Remove Rear:", d.removeRear());`
+                },
+                'Priority Queue': {
+                    explanation: 'A Priority Queue serves elements based on priority rather than FIFO order. Commonly implemented using Heaps, they are essential in algorithms like Dijkstra\\'s.',
+                    code: `// Simple array-based Priority Queue (for demonstration)
+// Real implementations use Min/Max Heaps for O(log n) performance
+class SimplePQ {
+  constructor() { this.items = []; }
+  
+  enqueue(element, priority) {
+    let qElement = { element, priority };
+    let added = false;
+    
+    for(let i = 0; i < this.items.length; i++) {
+      if(qElement.priority < this.items[i].priority) {
+        this.items.splice(i, 0, qElement);
+        added = true; break;
+      }
+    }
+    if(!added) this.items.push(qElement);
+  }
+  
+  dequeue() { return this.items.shift(); }
+}
+
+const pq = new SimplePQ();
+pq.enqueue("Low Priority Task", 3);
+pq.enqueue("High Priority Task", 1);
+pq.enqueue("Medium Priority Task", 2);
+
+console.log("First out:", pq.dequeue().element);`
+                },
+                'Monotonic Queue': {
+                    explanation: 'A monotonic queue maintains elements in sorted order dynamically while a window slides. It is extremely useful for problems like "Sliding Window Maximum".',
+                        code: `// Sliding Window Maximum using Monotonic Queue
+function maxSlidingWindow(nums, k) {
+  let ans = [];
+  let deque = []; // Stores indices
+  
+  for(let i = 0; i < nums.length; i++) {
+    // Remove indices out of current window
+    if(deque.length > 0 && deque[0] === i - k) {
+      deque.shift();
+    }
+    
+    // Maintain decreasing order in deque
+    while(deque.length > 0 && nums[deque[deque.length - 1]] < nums[i]) {
+      deque.pop();
+    }
+    
+    deque.push(i);
+    // Add to answer when window size is met
+    if(i >= k - 1) ans.push(nums[deque[0]]);
+  }
+  return ans;
+}
+
+console.log("Max sliding window [1,3,-1,-3,5,3,6,7], k=3:");
+console.log(maxSlidingWindow([1,3,-1,-3,5,3,6,7], 3));`
+                }
+            };
+
+            const defaultCode = `// Try Yourself: ${title}\nfunction practice() {\n  console.log("Practicing ${title}...");\n  // Add your logic here\n}\n\npractice();`;
+
+            const data = specificContent[title] || {
+                explanation: `${title} is an important concept in ${category}. ${description}`,
+                code: defaultCode
+            };
+
+            return data;
+        };
+
+        const topicData = generateTopicContent(topic.title, topic.category, topic.description);
+
+        await TopicContent.create({
+            topic: topic._id,
+            title: topic.title,
+            description: topic.description,
+            concept: {
+                explanation: topicData.explanation,
+                keyPoints: [
+                    `Understanding ${topic.title} is crucial for mastering ${topic.category}`,
+                    'Practice with various examples to build intuition',
+                    'Focus on time and space complexity analysis',
+                    'Learn common patterns and edge cases'
+                ],
+                timeComplexity: topic.timeComplexity || 'Varies',
+                spaceComplexity: topic.spaceComplexity || 'Varies'
+            },
+            tips: [
+                `Start with simple examples of ${topic.title}`,
+                'Draw diagrams to visualize the concept',
+                'Practice coding implementations',
+                'Solve related LeetCode/GeeksforGeeks problems'
+            ],
+            commonPatterns: [
+                {
+                    name: `Try Yourself: ${topic.title}`,
+                    description: `Here is a sample code snippet for ${topic.title}. Modify it and run it to see the output.`,
+                    language: 'javascript',
+                    example: topicData.code
+                }
+            ]
+        });
+        subtopicContentCreated++;
+        console.log(`📝 Added basic content for subtopic: ${topic.title} `);
+    }
         }
 
-        console.log(`\n🎉 Content seeding completed!`);
-        console.log(`   Main topics: ${mainContentCreated}/${mainTopics.length}`);
-        console.log(`   Subtopics: ${subtopicContentCreated}/${allSubtopics.length}`);
-        console.log(`   Total: ${mainContentCreated + subtopicContentCreated}/${mainTopics.length + allSubtopics.length}`);
+console.log(`\n🎉 Content seeding completed!`);
+console.log(`   Main topics: ${mainContentCreated}/${mainTopics.length}`);
+console.log(`   Subtopics: ${subtopicContentCreated}/${allSubtopics.length}`);
+console.log(`   Total: ${mainContentCreated + subtopicContentCreated}/${mainTopics.length + allSubtopics.length}`);
 
-        process.exit(0);
+process.exit(0);
     } catch (error) {
-        console.error('❌ Error seeding animated content:', error);
-        process.exit(1);
-    }
+    console.error('❌ Error seeding animated content:', error);
+    process.exit(1);
+}
 };
 
 seedAnimatedContent();
