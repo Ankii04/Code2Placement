@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../services/api';
 import DSAVisualizer from './DSAVisualizer';
 import RunnableCodeSnippet from './RunnableCodeSnippet';
+import IDECodeBlock from './IDECodeBlock';
 import './DSATopicNotes.css';
 
 const DSATopicNotes = ({ topic }) => {
@@ -205,15 +206,7 @@ const DSATopicNotes = ({ topic }) => {
                                             <p style={{ fontWeight: '600', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>
                                                 Input:
                                             </p>
-                                            <pre style={{
-                                                background: 'var(--bg-primary)',
-                                                padding: '1rem',
-                                                borderRadius: '8px',
-                                                overflow: 'auto',
-                                                fontSize: '0.9375rem'
-                                            }}>
-                                                <code>{example.input}</code>
-                                            </pre>
+                                            <IDECodeBlock code={example.input} language="javascript" title="Input" />
                                         </div>
                                     )}
 
@@ -222,15 +215,7 @@ const DSATopicNotes = ({ topic }) => {
                                             <p style={{ fontWeight: '600', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>
                                                 Output:
                                             </p>
-                                            <pre style={{
-                                                background: 'var(--bg-primary)',
-                                                padding: '1rem',
-                                                borderRadius: '8px',
-                                                overflow: 'auto',
-                                                fontSize: '0.9375rem'
-                                            }}>
-                                                <code>{example.output}</code>
-                                            </pre>
+                                            <IDECodeBlock code={example.output} language="javascript" title="Output" />
                                         </div>
                                     )}
 

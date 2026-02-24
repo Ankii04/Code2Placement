@@ -1,0 +1,65 @@
+.ide-block-container {
+    background: #0f172a;
+    /* deep dark blue matching Try Yourself */
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    color: #e2e8f0;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.ide-block-header {
+    display: flex;
+    align-items: center;
+    background: #1e293b;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #334155;
+    position: relative;
+}
+
+.ide-window-controls {
+    display: flex;
+    gap: 0.5rem;
+    position: absolute;
+    left: 1rem;
+}
+
+.ide-window-controls .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.ide-window-controls .dot.red {
+    background-color: #ef4444;
+}
+
+.ide-window-controls .dot.yellow {
+    background-color: #f59e0b;
+}
+
+.ide-window-controls .dot.green {
+    background-color: #10b981;
+}
+
+.ide-title-section {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 auto;
+    /* Center the title */
+}
+
+.ide-title {
+    font-size: 0.95rem;
+    font-family: monospace;
+    font-weight: 500;
+}
+
+.ide-editor-wrapper {
+    background: #0f172a;
+    width: 100%;
+}

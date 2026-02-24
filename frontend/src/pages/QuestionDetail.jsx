@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getQuestionById } from '../services/userService';
 import CodeEditor from '../components/CodeEditor';
+import IDECodeBlock from '../components/IDECodeBlock';
 import './QuestionDetail.css';
 
 const QuestionDetail = () => {
@@ -99,11 +100,11 @@ const QuestionDetail = () => {
                                         <div className="example-content">
                                             <div className="example-item">
                                                 <strong>Input:</strong>
-                                                <pre>{example.input}</pre>
+                                                <IDECodeBlock code={example.input} language="text" title="Input" />
                                             </div>
                                             <div className="example-item">
                                                 <strong>Output:</strong>
-                                                <pre>{example.output}</pre>
+                                                <IDECodeBlock code={example.output} language="text" title="Output" />
                                             </div>
                                             {example.explanation && (
                                                 <div className="example-item">
@@ -159,7 +160,7 @@ const QuestionDetail = () => {
                                 {showSolution && (
                                     <div className="solution-box">
                                         <h3>Solution</h3>
-                                        <pre><code>{question.solution.code || question.solution}</code></pre>
+                                        <IDECodeBlock code={question.solution.code || question.solution} language="javascript" title="Solution" />
                                     </div>
                                 )}
                             </section>

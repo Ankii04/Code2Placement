@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getDailyChallenge } from '../services/userService';
+import IDECodeBlock from '../components/IDECodeBlock';
 
 const DailyChallenge = () => {
     const [challenge, setChallenge] = useState(null);
@@ -113,15 +114,7 @@ const DailyChallenge = () => {
                         {showSolution && (
                             <div className="glass-card" style={{ padding: '1.5rem', background: 'var(--bg-primary)' }}>
                                 <h4>Solution</h4>
-                                <pre style={{
-                                    background: 'var(--bg-secondary)',
-                                    padding: '1.5rem',
-                                    borderRadius: '8px',
-                                    overflow: 'auto',
-                                    lineHeight: '1.6'
-                                }}>
-                                    <code>{challenge.solution}</code>
-                                </pre>
+                                <IDECodeBlock code={challenge.solution} language="javascript" title="Solution" />
                             </div>
                         )}
                     </div>

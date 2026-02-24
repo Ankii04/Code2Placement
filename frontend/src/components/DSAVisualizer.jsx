@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import IDECodeBlock from './IDECodeBlock';
 import './DSAVisualizer.css';
 
 const DSAVisualizer = ({ topic, example }) => {
@@ -188,18 +189,7 @@ const DSAVisualizer = ({ topic, example }) => {
                         }}>
                             💻 Code
                         </div>
-                        <pre style={{
-                            background: 'var(--bg-primary)',
-                            padding: '1.5rem',
-                            borderRadius: '12px',
-                            overflow: 'auto',
-                            fontSize: '0.9375rem',
-                            borderLeft: '4px solid #10b981',
-                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                            lineHeight: '1.6'
-                        }}>
-                            <code>{currentStepData.code}</code>
-                        </pre>
+                        <IDECodeBlock code={currentStepData.code} language="javascript" title="Step Code" />
                     </div>
                 )}
             </div>
