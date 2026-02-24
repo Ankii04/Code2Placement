@@ -235,6 +235,14 @@ const seedAnimatedContent = async () => {
                         'Practice regularly with coding problems',
                         'Understand the theory before implementation',
                         'Review and revise concepts frequently'
+                    ],
+                    commonPatterns: [
+                        {
+                            name: `Basic Example: ${topic.title}`,
+                            description: `Try out a foundational approach for ${topic.title}. Modify the code and see how it works!`,
+                            language: 'javascript',
+                            example: `// Example for ${topic.title}\nfunction solve() {\n  console.log("Exploring ${topic.title}");\n  // Add your code here\n}\n\nsolve();`
+                        }
                     ]
                 });
                 mainContentCreated++;
@@ -281,6 +289,14 @@ const seedAnimatedContent = async () => {
                         'Draw diagrams to visualize the concept',
                         'Practice coding implementations',
                         'Solve related LeetCode/GeeksforGeeks problems'
+                    ],
+                    commonPatterns: [
+                        {
+                            name: `Try Yourself: ${topic.title}`,
+                            description: `Here is a sample code snippet for ${topic.title}. Run it to see the output.`,
+                            language: 'javascript',
+                            example: `// Sample implementation for ${topic.title}\nfunction practice() {\n  console.log("Practicing ${topic.title}...");\n  // Try writing some logic here\n  return true;\n}\n\nconsole.log(practice());`
+                        }
                     ]
                 });
                 subtopicContentCreated++;

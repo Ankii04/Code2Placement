@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import DSAVisualizer from './DSAVisualizer';
+import RunnableCodeSnippet from './RunnableCodeSnippet';
 import './DSATopicNotes.css';
 
 const DSATopicNotes = ({ topic }) => {
@@ -235,19 +236,11 @@ const DSATopicNotes = ({ topic }) => {
 
                                     {example.code && (
                                         <div style={{ marginBottom: '1rem' }}>
-                                            <p style={{ fontWeight: '600', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>
-                                                Code:
-                                            </p>
-                                            <pre style={{
-                                                background: 'var(--bg-primary)',
-                                                padding: '1rem',
-                                                borderRadius: '8px',
-                                                overflow: 'auto',
-                                                fontSize: '0.9375rem',
-                                                borderLeft: '3px solid var(--primary-color)'
-                                            }}>
-                                                <code>{example.code}</code>
-                                            </pre>
+                                            <RunnableCodeSnippet
+                                                code={example.code}
+                                                language={example.language || 'javascript'}
+                                                input={example.input || ''}
+                                            />
                                         </div>
                                     )}
 
@@ -280,15 +273,12 @@ const DSATopicNotes = ({ topic }) => {
                                 <h4 style={{ marginBottom: '0.75rem' }}>{pattern.name}</h4>
                                 <p style={{ color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>{pattern.description}</p>
                                 {pattern.example && (
-                                    <pre style={{
-                                        background: 'var(--bg-primary)',
-                                        padding: '1rem',
-                                        borderRadius: '8px',
-                                        overflow: 'auto',
-                                        fontSize: '0.875rem'
-                                    }}>
-                                        <code>{pattern.example}</code>
-                                    </pre>
+                                    <div style={{ marginTop: '1rem' }}>
+                                        <RunnableCodeSnippet
+                                            code={pattern.example}
+                                            language={pattern.language || 'javascript'}
+                                        />
+                                    </div>
                                 )}
                             </div>
                         ))}
