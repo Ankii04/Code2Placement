@@ -269,12 +269,252 @@ const seedAnimatedContent = async () => {
                 console.log(`✅ Added animated content for subtopic: ${topic.title}`);
             } else {
                 // Create basic content for subtopics without detailed data
+                // Helper function to generate topic specific implementation
+                const generateTopicContent = (title, category, description) => {
+                    const specificContent = {
+                        'Time & Space Complexity': {
+                            explanation: 'Time complexity answers the question "How fast does the runtime grow as the input size grows?" Space complexity answers "How much extra memory do we need as input size grows?" Evaluating these is paramount for writing scalable algorithms.',
+                            code: `// Time Complexity: O(n) example
+function findMax(arr) {
+  let max = -Infinity;
+  // We visit each element once, so it scales linearly with array length
+  for(let n of arr) {
+    if(n > max) max = n;
+  }
+  return max;
+}
+
+const data = [10, 4, 30, 2, 70, 8];
+console.log("Max element:", findMax(data));`
+                        },
+                        'Asymptotic Notations (Big-O, Ω, Θ)': {
+                            explanation: 'Big-O represents the upper bound (worst-case), Omega (Ω) is the lower bound (best-case), and Theta (Θ) is the exact bound (average-case). Big-O is most commonly used in interviews.',
+                            code: `// Big-O Notations
+function constantTime(arr) {
+  console.log("O(1) - Constant:", arr[0]);
+}
+
+function linearTime(arr) {
+  console.log("O(n) - Linear:");
+  arr.forEach(element => console.log(element));
+}
+
+constantTime([1, 2, 3]);
+linearTime([1, 2, 3]);`
+                        },
+                        'Best, Worst, Average Case Analysis': {
+                            explanation: 'Algorithms can perform differently depending on the input variation. Best case scenario occurs when data is exactly how we want it. Worst case is the maximum time. Average is expected time across all inputs.',
+                            code: `// Demonstrating best and worst cases in Search
+function linearSearch(arr, target) {
+  let steps = 0;
+  for (let i = 0; i < arr.length; i++) {
+    steps++;
+    if (arr[i] === target) {
+      console.log(\`Found \${target} in \${steps} step(s)!\`);
+      return;
+    }
+  }
+  console.log(\`\${target} not found after \${steps} steps.\`);
+}
+
+const arr = [10, 20, 30, 40, 50];
+linearSearch(arr, 10); // Best case: 1 step
+linearSearch(arr, 50); // Worst case: 5 steps`
+                        },
+                        'Recursion vs Iteration': {
+                            explanation: 'Recursion happens when a function calls itself to solve a smaller instance of the same problem. Iteration uses loops like `for` and `while`. Both can solve similar problems, but recursion involves overhead from the call stack.',
+                            code: `// Computing Factorial
+function factIterative(n) {
+  let res = 1;
+  for(let i = 1; i <= n; i++) res *= i;
+  return res;
+}
+
+function factRecursive(n) {
+  if (n <= 1) return 1;
+  return n * factRecursive(n - 1);
+}
+
+console.log("Iterative 5! =", factIterative(5));
+console.log("Recursive 5! =", factRecursive(5));`
+                        },
+                        'Two Pointers': {
+                            explanation: 'The Two Pointers technique involves using two indices to continuously iterate through an array or list until certain conditions are met, drastically reducing time complexities from O(n^2) to O(n).',
+                            code: `// Two Sum on sorted array
+function twoSum(arr, target) {
+  let left = 0;
+  let right = arr.length - 1;
+  
+  while(left < right) {
+    let sum = arr[left] + arr[right];
+    if (sum === target) return [left, right];
+    else if (sum < target) left++;
+    else right--;
+  }
+  return null;
+}
+
+console.log("Indices for sum 9:", twoSum([2, 7, 11, 15], 9));`
+                        },
+                        'Sliding Window': {
+                            explanation: 'Sliding Window is used to compute something over sequential subarrays. Instead of traversing the same elements repeatedly, you simply slide the window, removing the contribution of the element left behind and adding the new element.',
+                            code: `// Maximum sum of subarray of size k
+function maxSubArraySum(arr, k) {
+  let maxSum = 0, windowSum = 0;
+  
+  // Calculate first window
+  for(let i = 0; i < k; i++) windowSum += arr[i];
+  maxSum = windowSum;
+  
+  // Slide window
+  for(let i = k; i < arr.length; i++) {
+    windowSum = windowSum - arr[i-k] + arr[i];
+    maxSum = Math.max(maxSum, windowSum);
+  }
+  return maxSum;
+}
+
+console.log("Max sum of 3 elements:", maxSubArraySum([1, 4, 2, 10, 2, 3, 1, 0, 20], 3));`
+                        },
+                        'Binary Search': {
+                            explanation: 'Binary Search is a divide-and-conquer algorithm that finds an element in a sorted array in O(log n) time by repeatedly dividing the search interval in half.',
+                            code: `// Binary Search Implementation
+function binarySearch(arr, target) {
+  let left = 0, right = arr.length - 1;
+  
+  while(left <= right) {
+    let mid = Math.floor((left + right) / 2);
+    if(arr[mid] === target) return mid;
+    else if(arr[mid] < target) left = mid + 1;
+    else right = mid - 1;
+  }
+  return -1;
+}
+
+const sortedArr = [1, 3, 5, 7, 9, 11, 13];
+console.log("Index of 7:", binarySearch(sortedArr, 7));`
+                        },
+                        'Hash Maps': {
+                            explanation: 'Hash Maps (or Hash Tables) store key-value pairs allowing access to values in O(1) time on average. They are extremely useful for counting frequencies, tracking seen elements, or associating data.',
+                            code: `// Finding frequency of characters
+function charFrequency(str) {
+  const map = new Map();
+  
+  for(let char of str) {
+    map.set(char, (map.get(char) || 0) + 1);
+  }
+  
+  for(let [key, value] of map) {
+    console.log(\`\${key}: \${value}\`);
+  }
+}
+
+charFrequency("hello algorithm");`
+                        },
+                        'Singly Linked List': {
+                            explanation: 'A Singly Linked List is a linear collection of data elements, whose order is not given by their physical placement in memory. Instead, each element points to the next, creating a sequence.',
+                            code: `// Implementing and Traversing a Linked List
+class Node {
+  constructor(data) {
+    this.data = data;
+    this.next = null;
+  }
+}
+
+const head = new Node(1);
+head.next = new Node(2);
+head.next.next = new Node(3);
+
+let curr = head;
+while(curr !== null) {
+  console.log("Node value:", curr.data);
+  curr = curr.next;
+}`
+                        },
+                        'Reverse Linked List': {
+                            explanation: 'Reversing a linked list means changing the next pointers of all nodes so that the last node becomes the head, and the head becomes the last node pointing to null. This is a very common interview question.',
+                            code: `// Reversing a Linked List Iteratively
+class Node {
+  constructor(data, next = null) {
+    this.data = data;
+    this.next = next;
+  }
+}
+
+function reverseList(head) {
+  let prev = null;
+  let curr = head;
+  while(curr !== null) {
+    let nextTemp = curr.next;
+    curr.next = prev;
+    prev = curr;
+    curr = nextTemp;
+  }
+  return prev;
+}
+
+const list = new Node(1, new Node(2, new Node(3)));
+const reversed = reverseList(list);
+console.log("New Head:", reversed.data);`
+                        },
+                        'Stack Basics': {
+                            explanation: 'A Stack is a Last-In-First-Out (LIFO) data structure. You can push elements onto the top of the stack and pop them off the top. They are often used for managing function calls, tracking history, or validating structured language.',
+                            code: `// Stack implemented with an Array
+class Stack {
+  constructor() {
+    this.items = [];
+  }
+  push(element) { this.items.push(element); }
+  pop() { return this.items.pop(); }
+  peek() { return this.items[this.items.length - 1]; }
+  isEmpty() { return this.items.length === 0; }
+}
+
+const stack = new Stack();
+stack.push(10);
+stack.push(20);
+console.log("Popped element:", stack.pop());
+console.log("Current top element:", stack.peek());`
+                        },
+                        'Queue Basics': {
+                            explanation: 'A Queue is a First-In-First-Out (FIFO) data structure. Elements are enqueued at the back and dequeued from the front. They are used in scheduling algorithms, breadth-first searches, and anywhere fairness is a factor.',
+                            code: `// Basic Queue implementation
+class Queue {
+  constructor() {
+    this.items = [];
+  }
+  enqueue(ele) { this.items.push(ele); }
+  dequeue() { return this.items.shift(); }
+  front() { return this.items[0]; }
+  isEmpty() { return this.items.length === 0; }
+}
+
+const queue = new Queue();
+queue.enqueue("Task 1");
+queue.enqueue("Task 2");
+console.log("Processing:", queue.dequeue());
+console.log("Next up:", queue.front());`
+                        }
+                    };
+
+                    const defaultCode = `// Try Yourself: ${title}\nfunction practice() {\n  console.log("Practicing ${title}...");\n  // Add your logic here\n}\n\npractice();`;
+
+                    const data = specificContent[title] || {
+                        explanation: `${title} is an important concept in ${category}. ${description}`,
+                        code: defaultCode
+                    };
+
+                    return data;
+                };
+
+                const topicData = generateTopicContent(topic.title, topic.category, topic.description);
+
                 await TopicContent.create({
                     topic: topic._id,
                     title: topic.title,
                     description: topic.description,
                     concept: {
-                        explanation: `${topic.title} is an important concept in ${topic.category}. ${topic.description}`,
+                        explanation: topicData.explanation,
                         keyPoints: [
                             `Understanding ${topic.title} is crucial for mastering ${topic.category}`,
                             'Practice with various examples to build intuition',
@@ -293,14 +533,14 @@ const seedAnimatedContent = async () => {
                     commonPatterns: [
                         {
                             name: `Try Yourself: ${topic.title}`,
-                            description: `Here is a sample code snippet for ${topic.title}. Run it to see the output.`,
+                            description: `Here is a sample code snippet for ${topic.title}. Modify it and run it to see the output.`,
                             language: 'javascript',
-                            example: `// Sample implementation for ${topic.title}\nfunction practice() {\n  console.log("Practicing ${topic.title}...");\n  // Try writing some logic here\n  return true;\n}\n\nconsole.log(practice());`
+                            example: topicData.code
                         }
                     ]
                 });
                 subtopicContentCreated++;
-                console.log(`📝 Added basic content for subtopic: ${topic.title}`);
+                console.log(`📝 Added basic content for subtopic: ${topic.title} `);
             }
         }
 
