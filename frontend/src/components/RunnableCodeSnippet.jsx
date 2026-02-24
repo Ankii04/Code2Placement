@@ -1,15 +1,20 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
-import { useTheme } from '../context/ThemeContext';
 import api from '../services/api';
+import { CodeXml, Play, Eraser, RotateCcw } from 'lucide-react';
 import './RunnableCodeSnippet.css';
 
 const RunnableCodeSnippet = ({ code: initialCode, language, input = '' }) => {
-    const { theme } = useTheme();
     const editorRef = useRef(null);
     const [code, setCode] = useState(initialCode);
     const [output, setOutput] = useState('');
     const [isRunning, setIsRunning] = useState(false);
+
+    // Update code if initialCode changes (e.g., when switching subtopics)
+    useEffect(() => {
+        setCode(initialCode);
+        setOutput('');
+    }, [initialCode]);
 
     const handleEditorDidMount = (editor, monaco) => {
         editorRef.current = editor;
@@ -41,43 +46,76 @@ const RunnableCodeSnippet = ({ code: initialCode, language, input = '' }) => {
         }
     };
 
+    const handleClear = () => {
+        setCode('');
+        setOutput('');
+    };
+
+    const handleReset = () => {
+        setCode(initialCode);
+        setOutput('');
+    };
+
+    const displayLanguage = (!language || language === 'javascript') ? 'JavaScript' : language;
+
     return (
         <div className="runnable-snippet-container">
-            <div className="runnable-snippet-header">
-                <span className="snippet-title">Try Yourself ({language || 'javascript'})</span>
-                <button
-                    className="btn-run-sm"
-                    onClick={handleRunCode}
-                    disabled={isRunning}
-                >
-                    {isRunning ? 'Running...' : '▶ Run Code'}
-                </button>
+            <div>
+                <div className="snippet-header">
+                    <CodeXml size={24} className="snippet-icon" />
+                    <span className="snippet-title">Try Yourself - Code Editor</span>
+                </div>
+                <p className="snippet-description">
+                    Write your own {displayLanguage} code below and click "Run Code" to see the output.
+                </p>
             </div>
 
             <div className="snippet-editor-wrapper">
                 <Editor
                     height="200px" // Fixed height for inline snippets
                     language={language || 'javascript'}
-                    theme={theme === 'dark' ? 'vs-dark' : 'light'}
+                    theme="vs-dark"
                     value={code}
+                    onChange={(value) => setCode(value)}
                     options={{
                         minimap: { enabled: false },
                         fontSize: 14,
                         lineNumbers: 'on',
                         scrollBeyondLastLine: false,
-                        readOnly: true, // As per prompt, users check the code but cannot change it.
-                        wordWrap: 'on'
+                        readOnly: false,
+                        wordWrap: 'on',
+                        padding: { top: 16 }
                     }}
                     onMount={handleEditorDidMount}
                 />
             </div>
 
-            {output && (
-                <div className="snippet-output-wrapper">
-                    <div className="output-header">Output:</div>
-                    <pre className="snippet-output">{output}</pre>
-                </div>
-            )}
+            <div className="snippet-actions">
+                <button
+                    className="btn-action btn-run"
+                    onClick={handleRunCode}
+                    disabled={isRunning}
+                >
+                    <Play size={16} fill="currentColor" />
+                    {isRunning ? 'Running...' : 'Run Code'}
+                </button>
+                <button className="btn-action btn-secondary" onClick={handleClear}>
+                    <Eraser size={16} />
+                    Clear
+                </button>
+                <button className="btn-action btn-secondary" onClick={handleReset}>
+                    <RotateCcw size={16} />
+                    Reset
+                </button>
+            </div>
+
+            <div className="snippet-output-wrapper">
+                {output ? (
+                    output
+                ) : (
+                    <span className="output-placeholder">// Output will appear here ...</span>
+                )}
+            </div>
         </div>
     );
 };
