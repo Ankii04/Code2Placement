@@ -1,88 +1,67 @@
 import express from 'express';
 import axios from 'axios';
+import mongoose from 'mongoose';
 import Question from '../models/Question.js';
 import UserProgress from '../models/UserProgress.js';
 import { protect } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
-// Piston API (Free, No API Key Required)
-const PISTON_API = 'https://emkc.org/api/v2/piston';
+// Wandbox API (Free Public API - Very Stable)
+const WANDBOX_API = 'https://wandbox.org/api/compile.json';
 
-// Language mapping for Piston
-const PISTON_LANGUAGES = {
-    'javascript': { language: 'javascript', version: '18.15.0' },
-    'python': { language: 'python', version: '3.10.0' },
-    'java': { language: 'java', version: '15.0.2' },
-    'cpp': { language: 'c++', version: '10.2.0' },
-    'c': { language: 'c', version: '10.2.0' }
+// Language mapping for Wandbox
+const WANDBOX_LANGUAGES = {
+    'javascript': 'nodejs-head',
+    'python': 'python-head',
+    'java': 'openjdk-head',
+    'cpp': 'gcc-head',
+    'c': 'gcc-head'
 };
 
 /**
- * Execute code using Piston API (Free)
+ * Execute code using Wandbox API (Free)
  */
 async function executeCode(code, language, input = '') {
     try {
-        const langConfig = PISTON_LANGUAGES[language];
-        if (!langConfig) {
+        const wandboxLang = WANDBOX_LANGUAGES[language];
+        if (!wandboxLang) {
             throw new Error(`Unsupported language: ${language}`);
         }
 
-        // Determine file name based on language
-        const fileNames = {
-            'javascript': 'main.js',
-            'python': 'main.py',
-            'java': 'Main.java',
-            'cpp': 'main.cpp',
-            'c': 'main.c'
-        };
-
-        const response = await axios.post(`${PISTON_API}/execute`, {
-            language: langConfig.language,
-            version: langConfig.version,
-            files: [{
-                name: fileNames[language] || 'main.txt',
-                content: code
-            }],
+        const response = await axios.post(WANDBOX_API, {
+            compiler: wandboxLang,
+            code: code,
             stdin: input,
-            args: [],
-            compile_timeout: 10000,
-            run_timeout: 3000,
-            compile_memory_limit: -1,
-            run_memory_limit: -1
+            save: false
         });
 
         const result = response.data;
 
-        // Check for compilation errors
-        if (result.compile && result.compile.code !== 0) {
-            return {
-                success: false,
-                error: result.compile.stderr || result.compile.output || 'Compilation error',
-                status: 'Compilation Error'
-            };
-        }
+        // Wandbox returns status 0 for success, non-zero for errors
+        // program_error and compiler_error contain the respective error outputs
+        const error = result.program_error || result.compiler_error || result.signal;
 
-        // Check for runtime errors
-        if (result.run && result.run.code !== 0 && result.run.signal) {
+        if (result.status !== "0" || error) {
             return {
                 success: false,
-                error: result.run.stderr || result.run.output || 'Runtime error',
-                status: 'Runtime Error'
+                error: error || 'Execution failed',
+                status: 'Error'
             };
         }
 
         // Success
         return {
             success: true,
-            output: result.run?.stdout || result.run?.output || '',
-            error: result.run?.stderr || null,
+            output: result.program_output || '',
+            error: null,
             status: 'Completed'
         };
 
     } catch (error) {
         console.error('Code execution error:', error.response?.data || error.message);
-        throw new Error('Code execution failed');
+        const errorMsg = error.response?.data?.error || error.message || 'Wandbox API execution failed';
+        throw new Error(`Code execution failed: ${errorMsg}`);
     }
 }
 
@@ -118,7 +97,7 @@ router.post('/execute', async (req, res) => {
  */
 router.post('/test', async (req, res) => {
     try {
-        const { code, language, testCases } = req.body;
+        const { code, language, testCases, questionId } = req.body;
 
         if (!code || !language || !testCases) {
             return res.status(400).json({
@@ -127,28 +106,52 @@ router.post('/test', async (req, res) => {
             });
         }
 
+        // Try getting question for driver code if questionId is provided
+        let finalCode = code;
+        if (questionId) {
+            const question = await Question.findById(questionId);
+            if (question && question.driverCode && question.driverCode[language]) {
+                const driver = question.driverCode[language];
+                if (driver.includes('// --- USER CODE ---')) {
+                    finalCode = driver.replace('// --- USER CODE ---', code);
+                } else {
+                    finalCode = code + '\n' + driver;
+                }
+            }
+        }
+
         const results = [];
 
         // Run against each test case (limit to 5 for performance)
         for (let i = 0; i < Math.min(testCases.length, 5); i++) {
             const testCase = testCases[i];
 
-            // Format input: If it's a bracketed array string like [1,2,3], convert to space separated "length 1 2 3"
+            // Format input: Handle formats like arr=[1,2,3], target=5
             let formattedInput = testCase.input;
-            if (typeof formattedInput === 'string' && formattedInput.trim().startsWith('[') && formattedInput.trim().endsWith(']')) {
-                try {
-                    const parsed = JSON.parse(formattedInput);
-                    if (Array.isArray(parsed)) {
-                        formattedInput = `${parsed.length}\n${parsed.join(' ')}`;
-                    }
-                } catch (e) {
-                    console.error('Input parsing failed, using raw input');
+            if (typeof formattedInput === 'string') {
+                // 1. Convert arr=[1,2,3] to "3 1 2 3"
+                formattedInput = formattedInput.replace(/(\w+)\s*=\s*\[(.*?)\]/g, (match, key, content) => {
+                    const elements = content.split(',').map(s => s.trim()).filter(s => s !== '');
+                    return `${elements.length} ${elements.join(' ')}`;
+                });
+                // 2. Convert target=5 to "5"
+                formattedInput = formattedInput.replace(/(\w+)\s*=\s*([^,\[\]]+)/g, '$2');
+                // 3. Convert pure [1,2,3] to "3 1 2 3"
+                if (formattedInput.trim().startsWith('[') && formattedInput.trim().endsWith(']')) {
+                    try {
+                        const parsed = JSON.parse(formattedInput);
+                        if (Array.isArray(parsed)) {
+                            formattedInput = `${parsed.length}\n${parsed.join(' ')}`;
+                        }
+                    } catch (e) { }
                 }
+                // 4. Clean up commas and extra spaces
+                formattedInput = formattedInput.replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
             }
 
             console.log(`Running test case ${i + 1}: Original='${testCase.input}', Formatted='${formattedInput.replace(/\n/g, ' ')}'`);
 
-            const result = await executeCode(code, language, formattedInput);
+            const result = await executeCode(finalCode, language, formattedInput);
             console.log(`Result ${i + 1} success:`, result.success);
 
             if (!result.success) {
@@ -196,8 +199,11 @@ router.post('/test', async (req, res) => {
  */
 router.post('/submit', protect, async (req, res) => {
     try {
-        const { code, language, questionId } = req.body;
+        const { code, language } = req.body;
+        const questionId = req.body.questionId?.toString().trim();
         const userId = req.user?.id;
+
+        console.log(`Submission attempt: User=${userId}, QuestionID=${questionId}, Lang=${language}`);
 
         if (!code || !language || !questionId) {
             return res.status(400).json({
@@ -206,34 +212,70 @@ router.post('/submit', protect, async (req, res) => {
             });
         }
 
-        // Get question with test cases
-        const question = await Question.findById(questionId);
+        // Try getting question with test cases
+        let question = await Question.findById(questionId);
+
+        // Fallback: If not found by model, try direct collection query (sometimes helps in serverless)
+        if (!question && mongoose.connection.readyState === 1) {
+            console.log('Question not found by model, trying direct collection query...');
+            const directQuestion = await mongoose.connection.db.collection('questions').findOne({
+                _id: new mongoose.Types.ObjectId(questionId)
+            });
+            if (directQuestion) {
+                console.log('Found question via direct collection query!');
+                question = directQuestion;
+            }
+        }
+
         if (!question) {
+            console.error(`ERROR: Question not found. ID provided: ${questionId}`);
             return res.status(404).json({
                 success: false,
-                error: 'Question not found'
+                error: `Question not found (ID: ${questionId}). Please refresh the page and try again.`
             });
         }
+
+        // --- LeetCode Style Wrapping ---
+        let finalCode = code;
+        if (question.driverCode && question.driverCode[language]) {
+            const driver = question.driverCode[language];
+            if (driver.includes('// --- USER CODE ---')) {
+                finalCode = driver.replace('// --- USER CODE ---', code);
+            } else {
+                finalCode = code + '\n' + driver; // Fallback
+            }
+        }
+        // -------------------------------
 
         const results = [];
         let allPassed = true;
 
         // Run against all test cases
         for (const testCase of question.testCases || []) {
-            // Format input: If it's a bracketed array string like [1,2,3], convert to space separated "length 1 2 3"
+            // Format input: Handle formats like arr=[1,2,3], target=5
             let formattedInput = testCase.input;
-            if (typeof formattedInput === 'string' && formattedInput.trim().startsWith('[') && formattedInput.trim().endsWith(']')) {
-                try {
-                    const parsed = JSON.parse(formattedInput);
-                    if (Array.isArray(parsed)) {
-                        formattedInput = `${parsed.length}\n${parsed.join(' ')}`;
-                    }
-                } catch (e) {
-                    // Fallback
+            if (typeof formattedInput === 'string') {
+                // 1. Convert arr=[1,2,3] to "3 1 2 3"
+                formattedInput = formattedInput.replace(/(\w+)\s*=\s*\[(.*?)\]/g, (match, key, content) => {
+                    const elements = content.split(',').map(s => s.trim()).filter(s => s !== '');
+                    return `${elements.length} ${elements.join(' ')}`;
+                });
+                // 2. Convert target=5 to "5"
+                formattedInput = formattedInput.replace(/(\w+)\s*=\s*([^,\[\]]+)/g, '$2');
+                // 3. Convert pure [1,2,3] to "3 1 2 3"
+                if (formattedInput.trim().startsWith('[') && formattedInput.trim().endsWith(']')) {
+                    try {
+                        const parsed = JSON.parse(formattedInput);
+                        if (Array.isArray(parsed)) {
+                            formattedInput = `${parsed.length}\n${parsed.join(' ')}`;
+                        }
+                    } catch (e) { }
                 }
+                // 4. Clean up commas and extra spaces
+                formattedInput = formattedInput.replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
             }
 
-            const result = await executeCode(code, language, formattedInput);
+            const result = await executeCode(finalCode, language, formattedInput);
 
             if (!result.success) {
                 results.push({

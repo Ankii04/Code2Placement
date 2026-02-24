@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import { useTheme } from '../context/ThemeContext';
 import api from '../services/api';
@@ -17,6 +17,16 @@ const CodeEditor = ({ question, onSubmit }) => {
     const [testResults, setTestResults] = useState([]);
     const [showLangDropdown, setShowLangDropdown] = useState(false);
 
+    // Reset code when question changes or language changes
+    useEffect(() => {
+        if (question) {
+            const defaultCode = question.starterCode?.[language] || getDefaultCode(language);
+            setCode(defaultCode);
+            setTestResults([]);
+            setOutput('');
+        }
+    }, [question?._id, language]);
+
     // Language configurations
     const languages = [
         { id: 'javascript', name: 'JavaScript', ext: 'js' },
@@ -29,11 +39,11 @@ const CodeEditor = ({ question, onSubmit }) => {
     // Default code templates
     function getDefaultCode(lang) {
         const templates = {
-            javascript: `const fs = require('fs');\nconst input = fs.readFileSync(0, 'utf8').trim();\n\nfunction solution(input) {\n    // Write your code here\n    return input;\n}\n\nconsole.log(solution(input));`,
-            python: `import sys\n\ndef solution(data):\n    # Write your code here\n    return data\n\nif __name__ == "__main__":\n    input_data = sys.stdin.read().strip()\n    print(solution(input_data))`,
-            java: `import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        if (sc.hasNextInt()) {\n            int n = sc.nextInt();\n            int[] arr = new int[n];\n            for (int i = 0; i < n; i++) {\n                arr[i] = sc.nextInt();\n            }\n            // Solve here\n            int max = arr[0];\n            for (int i = 1; i < n; i++) {\n                if (arr[i] > max) max = arr[i];\n            }\n            System.out.println(max);\n        }\n    }\n}`,
-            cpp: `#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int n;\n    if (!(cin >> n)) return 0;\n    vector<int> arr(n);\n    for (int i = 0; i < n; i++) {\n        cin >> arr[i];\n    }\n    \n    int maxVal = arr[0];\n    for (int i = 1; i < n; i++) {\n        if (arr[i] > maxVal) maxVal = arr[i];\n    }\n    cout << maxVal << endl;\n    \n    return 0;\n}`,
-            c: `#include <stdio.h>\n\nint main() {\n    int n;\n    if (scanf("%d", &n) != 1) return 0;\n    int arr[n];\n    for (int i = 0; i < n; i++) {\n        scanf("%d", &arr[i]);\n    }\n    \n    int max = arr[0];\n    for (int i = 1; i < n; i++) {\n        if (arr[i] > max) max = arr[i];\n    }\n    printf("%d\\n", max);\n    \n    return 0;\n}`
+            javascript: `// Write your solution here\nfunction solution(input) {\n    // Parse input and return output\n    return input;\n}\n\nconst fs = require('fs');\nconst input = fs.readFileSync(0, 'utf8').trim();\nconsole.log(solution(input));`,
+            python: `import sys\n\ndef solve():\n    # Read from stdin\n    # input_data = sys.stdin.read().strip()\n    \n    # Write your solution here\n    pass\n\nif __name__ == "__main__":\n    solve()`,
+            java: `import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        // Write your solution here\n        \n    }\n}`,
+            cpp: `#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\nint main() {\n    // Write your solution here\n    \n    return 0;\n}`,
+            c: `#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nint main() {\n    // Write your solution here\n    \n    return 0;\n}`
         };
         return templates[lang] || templates.javascript;
     }
@@ -41,9 +51,6 @@ const CodeEditor = ({ question, onSubmit }) => {
     // Handle language change
     const handleLanguageChange = (newLang) => {
         setLanguage(newLang);
-        setCode(getDefaultCode(newLang));
-        setOutput('');
-        setTestResults([]);
         setShowLangDropdown(false);
     };
 
@@ -85,7 +92,8 @@ const CodeEditor = ({ question, onSubmit }) => {
                 const response = await api.post('/code/test', {
                     code,
                     language,
-                    testCases: question.testCases.slice(0, 3) // Show first 3 test cases
+                    testCases: question.testCases.slice(0, 3), // Show first 3 test cases
+                    questionId: question._id
                 });
 
                 if (response.data.success) {
@@ -264,9 +272,29 @@ const CodeEditor = ({ question, onSubmit }) => {
                                         </div>
                                     ))}
                                 </div>
+                            ) : question?.testCases?.length > 0 ? (
+                                <div className="test-results-grid">
+                                    {question.testCases.slice(0, 3).map((testCase, index) => (
+                                        <div key={index} className="test-result-item">
+                                            <div className="test-result-header">
+                                                <span>Example Case {index + 1}</span>
+                                            </div>
+                                            <div className="test-result-body">
+                                                <div className="test-io">
+                                                    <strong>Input:</strong>
+                                                    <code>{testCase.input}</code>
+                                                </div>
+                                                <div className="test-io">
+                                                    <strong>Expected Output:</strong>
+                                                    <code>{testCase.expectedOutput}</code>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             ) : (
                                 <div className="empty-state">
-                                    <p>You must run your code first</p>
+                                    <p>No test cases available for this question.</p>
                                 </div>
                             )}
                         </div>
