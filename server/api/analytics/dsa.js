@@ -10,10 +10,32 @@ const app = express();
 // @route   GET /api/analytics/dsa/score
 // @desc    Calculate and return DSA score
 // @access  Private
+// @route   GET /api/analytics/dsa/score
+// @desc    Calculate and return DSA score
+// @access  Private
 app.get('/score', protect, async (req, res) => {
     try {
-        const progress = await UserProgress.findOne({ user: req.user._id })
-            .populate('solvedQuestions.question');
+        const { refresh } = req.query;
+
+        // Check for cached analysis first
+        const cachedAnalysis = await SkillAnalysis.findOne({ user: req.user._id });
+
+        // If cached analysis exists and not refreshing, return it
+        if (cachedAnalysis && !refresh) {
+            return res.json({
+                overall: cachedAnalysis.dsaScore.overall,
+                topicScores: cachedAnalysis.dsaScore.topicScores,
+                problemsSolved: cachedAnalysis.dsaScore.problemsSolved,
+                accuracy: cachedAnalysis.dsaScore.accuracy,
+                strengths: cachedAnalysis.dsaScore.strengths,
+                weaknesses: cachedAnalysis.dsaScore.weaknesses
+            });
+        }
+
+        const [progress, topics] = await Promise.all([
+            UserProgress.findOne({ user: req.user._id }).populate('solvedQuestions.question'),
+            Topic.find({ isMainCategory: true })
+        ]);
 
         if (!progress) {
             return res.json({
@@ -26,9 +48,6 @@ app.get('/score', protect, async (req, res) => {
             });
         }
 
-        // Get all main topics
-        const topics = await Topic.find({ isMainCategory: true });
-        const topicScores = {};
         const topicNames = {
             'Basics': 'basics',
             'Arrays': 'arrays',
@@ -49,31 +68,36 @@ app.get('/score', protect, async (req, res) => {
             'Miscellaneous': 'miscellaneous'
         };
 
-        // Calculate topic-wise scores
-        for (const topic of topics) {
+        // Calculate topic-wise scores in parallel
+        const topicCalculations = topics.map(async (topic) => {
             const topicKey = topicNames[topic.title] || topic.title.toLowerCase().replace(/\s+/g, '');
 
             // Find all subtopics of this main topic
-            const subtopics = await Topic.find({ parentTopic: topic._id });
+            const subtopics = await Topic.find({ parentTopic: topic._id }).select('_id');
             const subtopicIds = [topic._id, ...subtopics.map(s => s._id)];
 
             const totalQuestions = await Question.countDocuments({
                 topic: { $in: subtopicIds }
             });
 
-            const solvedQuestions = progress.solvedQuestions.filter(sq =>
+            const solvedInThisTopic = progress.solvedQuestions.filter(sq =>
                 sq.question && sq.question.topic &&
                 subtopicIds.some(id => id.toString() === sq.question.topic.toString())
             ).length;
 
-            topicScores[topicKey] = totalQuestions > 0
-                ? Math.round((solvedQuestions / totalQuestions) * 100)
-                : 0;
-        }
+            return {
+                key: topicKey,
+                score: totalQuestions > 0 ? Math.round((solvedInThisTopic / totalQuestions) * 100) : 0
+            };
+        });
+
+        const calculatedScores = await Promise.all(topicCalculations);
+        const topicScores = {};
+        calculatedScores.forEach(item => {
+            topicScores[item.key] = item.score;
+        });
 
         // Calculate overall score
-        // We only average topics that actually have questions, or all main categories?
-        // Let's average all main categories for a consistent 0-100 scale
         const scores = Object.values(topicScores);
         const overall = scores.length > 0
             ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
@@ -85,17 +109,17 @@ app.get('/score', protect, async (req, res) => {
             .map(([topic]) => topic);
 
         const weaknesses = Object.entries(topicScores)
-            .filter(([_, score]) => score < 50)
+            .filter(([_, score]) => score < 50 && score > 0) // Only mark as weakness if attempted or we want to show all? 
             .map(([topic]) => topic);
 
         // Update or create skill analysis
-        await SkillAnalysis.findOneAndUpdate(
+        const updatedAnalysis = await SkillAnalysis.findOneAndUpdate(
             { user: req.user._id },
             {
                 'dsaScore.overall': overall,
                 'dsaScore.topicScores': topicScores,
                 'dsaScore.problemsSolved': progress.totalSolved,
-                'dsaScore.accuracy': 85, // Can be calculated based on attempts
+                'dsaScore.accuracy': 85,
                 'dsaScore.strengths': strengths,
                 'dsaScore.weaknesses': weaknesses,
                 lastCalculated: new Date()

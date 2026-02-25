@@ -12,14 +12,24 @@ const app = express();
 // @access  Private
 app.get('/', protect, async (req, res) => {
     try {
-        // Get all scores
-        const skillAnalysis = await SkillAnalysis.findOne({ user: req.user._id });
-        const resumeAnalysis = await ResumeAnalysis.findOne({ user: req.user._id })
-            .sort({ analyzedAt: -1 });
-        const interviews = await MockInterview.find({
-            user: req.user._id,
-            status: 'COMPLETED'
-        }).sort({ completedAt: -1 }).limit(5);
+        const { refresh } = req.query;
+
+        // Check for cached readiness first
+        const cachedReadiness = await CompanyReadiness.findOne({ user: req.user._id });
+
+        if (cachedReadiness && !refresh) {
+            return res.json(cachedReadiness.companies);
+        }
+
+        // Parallelize fetches
+        const [skillAnalysis, resumeAnalysis, interviews] = await Promise.all([
+            SkillAnalysis.findOne({ user: req.user._id }),
+            ResumeAnalysis.findOne({ user: req.user._id }).sort({ analyzedAt: -1 }),
+            MockInterview.find({
+                user: req.user._id,
+                status: 'COMPLETED'
+            }).sort({ completedAt: -1 }).limit(5)
+        ]);
 
         const dsaScore = skillAnalysis?.dsaScore?.overall || 0;
         const csScore = skillAnalysis?.csFundamentals?.overall || 0;
