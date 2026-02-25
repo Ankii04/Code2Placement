@@ -53,12 +53,17 @@ app.get('/score', protect, async (req, res) => {
         for (const topic of topics) {
             const topicKey = topicNames[topic.title] || topic.title.toLowerCase().replace(/\s+/g, '');
 
+            // Find all subtopics of this main topic
+            const subtopics = await Topic.find({ parentTopic: topic._id });
+            const subtopicIds = [topic._id, ...subtopics.map(s => s._id)];
+
             const totalQuestions = await Question.countDocuments({
-                topic: topic._id
+                topic: { $in: subtopicIds }
             });
 
             const solvedQuestions = progress.solvedQuestions.filter(sq =>
-                sq.question?.topic?.toString() === topic._id.toString()
+                sq.question && sq.question.topic &&
+                subtopicIds.some(id => id.toString() === sq.question.topic.toString())
             ).length;
 
             topicScores[topicKey] = totalQuestions > 0
@@ -67,6 +72,8 @@ app.get('/score', protect, async (req, res) => {
         }
 
         // Calculate overall score
+        // We only average topics that actually have questions, or all main categories?
+        // Let's average all main categories for a consistent 0-100 scale
         const scores = Object.values(topicScores);
         const overall = scores.length > 0
             ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)

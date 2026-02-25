@@ -92,8 +92,8 @@ const Forum = () => {
                         <h1>Community Forum 💬</h1>
                         <p>Connect with other learners and share knowledge</p>
                     </div>
-                    <button className="btn btn-primary" onClick={() => setShowCreateModal(true)}>
-                        ➕ New Thread
+                    <button className="btn btn-primary" onClick={() => setShowCreateModal(!showCreateModal)}>
+                        {showCreateModal ? '✕ Close Form' : '➕ New Thread'}
                     </button>
                 </div>
 
@@ -118,6 +118,69 @@ const Forum = () => {
                         ))}
                     </div>
                 </div>
+
+                {/* Thread Creation Form (In-page) */}
+                {showCreateModal && (
+                    <div className="create-thread-section glass-card animate-fade-in">
+                        <div className="section-header">
+                            <h2>Create New Thread</h2>
+                            <button className="btn-close" onClick={() => setShowCreateModal(false)}>✕</button>
+                        </div>
+                        <form onSubmit={handleCreateThread}>
+                            <div className="form-grid">
+                                <div className="form-group">
+                                    <label>Title</label>
+                                    <input
+                                        type="text"
+                                        value={newThread.title}
+                                        onChange={(e) => setNewThread({ ...newThread, title: e.target.value })}
+                                        required
+                                        maxLength={200}
+                                        placeholder="What's on your mind?"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Category</label>
+                                    <select
+                                        value={newThread.category}
+                                        onChange={(e) => setNewThread({ ...newThread, category: e.target.value })}
+                                    >
+                                        {categories.filter(c => c !== 'All').map(cat => (
+                                            <option key={cat} value={cat}>{cat}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="form-group">
+                                <label>Content</label>
+                                <textarea
+                                    value={newThread.content}
+                                    onChange={(e) => setNewThread({ ...newThread, content: e.target.value })}
+                                    required
+                                    rows={5}
+                                    placeholder="Describe your discussion in detail..."
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Tags (comma separated)</label>
+                                <input
+                                    type="text"
+                                    value={newThread.tags}
+                                    onChange={(e) => setNewThread({ ...newThread, tags: e.target.value })}
+                                    placeholder="e.g., dsa, interview, amazon"
+                                />
+                            </div>
+                            <div className="form-actions">
+                                <button type="button" className="btn btn-secondary" onClick={() => setShowCreateModal(false)}>
+                                    Cancel
+                                </button>
+                                <button type="submit" className="btn btn-primary">
+                                    Publish Thread
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                )}
 
                 {/* Threads List */}
                 <div className="threads-list">
@@ -159,7 +222,10 @@ const Forum = () => {
                                         </div>
                                         <button
                                             className={`like-btn ${thread.likes?.includes(user?._id) ? 'liked' : ''}`}
-                                            onClick={() => handleLikeThread(thread._id)}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                handleLikeThread(thread._id);
+                                            }}
                                         >
                                             ❤️ {thread.likes?.length || 0}
                                         </button>
@@ -170,66 +236,6 @@ const Forum = () => {
                     )}
                 </div>
             </div>
-
-            {/* Create Thread Modal */}
-            {showCreateModal && (
-                <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
-                    <div className="modal-content glass-card" onClick={(e) => e.stopPropagation()}>
-                        <h2>Create New Thread</h2>
-                        <form onSubmit={handleCreateThread}>
-                            <div className="form-group">
-                                <label>Title</label>
-                                <input
-                                    type="text"
-                                    value={newThread.title}
-                                    onChange={(e) => setNewThread({ ...newThread, title: e.target.value })}
-                                    required
-                                    maxLength={200}
-                                    placeholder="Enter thread title..."
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Category</label>
-                                <select
-                                    value={newThread.category}
-                                    onChange={(e) => setNewThread({ ...newThread, category: e.target.value })}
-                                >
-                                    {categories.filter(c => c !== 'All').map(cat => (
-                                        <option key={cat} value={cat}>{cat}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="form-group">
-                                <label>Content</label>
-                                <textarea
-                                    value={newThread.content}
-                                    onChange={(e) => setNewThread({ ...newThread, content: e.target.value })}
-                                    required
-                                    rows={6}
-                                    placeholder="Share your thoughts, questions, or insights..."
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Tags (comma separated)</label>
-                                <input
-                                    type="text"
-                                    value={newThread.tags}
-                                    onChange={(e) => setNewThread({ ...newThread, tags: e.target.value })}
-                                    placeholder="e.g., arrays, sorting, javascript"
-                                />
-                            </div>
-                            <div className="modal-actions">
-                                <button type="button" className="btn btn-secondary" onClick={() => setShowCreateModal(false)}>
-                                    Cancel
-                                </button>
-                                <button type="submit" className="btn btn-primary">
-                                    Create Thread
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

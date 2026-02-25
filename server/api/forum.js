@@ -62,7 +62,8 @@ app.post('/threads/:id/reply', protect, async (req, res) => {
         const reply = await ForumReply.create({
             threadId: req.params.id,
             userId: req.user._id,
-            content: req.body.content
+            content: req.body.content,
+            parentReplyId: req.body.parentReplyId || null
         });
 
         await ForumThread.findByIdAndUpdate(req.params.id, {

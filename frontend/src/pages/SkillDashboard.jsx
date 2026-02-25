@@ -73,19 +73,22 @@ const SkillDashboard = () => {
             {/* Overall DSA Score */}
             <div className="glass-card" style={{ marginBottom: '2rem' }}>
                 <div className="score-header">
-                    <div>
-                        <h2>DSA Overall Score</h2>
+                    <div className="score-card main">
+                        <h2>Overall DSA Proficiency</h2>
+                        <div className="score-main-value" style={{ color: getScoreColor(dsaScore?.overall || 0) }}>
+                            {dsaScore?.overall || 0}
+                            <span className="score-total">/100</span>
+                        </div>
                         <p>Based on {dsaScore?.problemsSolved || 0} problems solved</p>
                     </div>
-                    <div className="score-display">
-                        <div style={{
-                            fontSize: '3rem',
-                            fontWeight: '800',
-                            color: getScoreColor(dsaScore?.overall || 0)
-                        }}>
-                            {dsaScore?.overall || 0}
+
+                    <div className="score-card points">
+                        <h2>DSA Points</h2>
+                        <div className="score-main-value">
+                            <span className="points-icon">🏆</span>
+                            {(dsaScore?.problemsSolved || 0) * 10}
                         </div>
-                        <div style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>out of 100</div>
+                        <p>Total experience earned</p>
                     </div>
                 </div>
 
@@ -132,17 +135,42 @@ const SkillDashboard = () => {
                 </div>
 
                 {/* Radar Chart */}
-                <h3 style={{ marginBottom: '1.5rem' }}>Topic-wise Performance</h3>
-                <div style={{ background: 'var(--bg-secondary)', borderRadius: 'var(--radius-lg)', padding: '1rem', border: '1px solid var(--border-color)' }}>
-                    <ResponsiveContainer width="100%" height={400}>
-                        <RadarChart data={radarData}>
-                            <PolarGrid stroke="var(--border-color)" />
-                            <PolarAngleAxis dataKey="topic" tick={{ fill: 'var(--text-primary)', fontSize: 12 }} />
-                            <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: 'var(--text-secondary)' }} />
-                            <Radar name="Score" dataKey="score" stroke="var(--primary-color)" fill="var(--primary-color)" fillOpacity={0.6} />
-                            <Tooltip contentStyle={{ background: 'var(--bg-primary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', color: 'var(--text-primary)' }} />
-                        </RadarChart>
-                    </ResponsiveContainer>
+                <div className="radar-container">
+                    <h3 style={{ marginBottom: '2rem', textAlign: 'center', fontSize: '1.5rem' }}>Topic-wise Performance</h3>
+                    <div style={{ width: '100%', height: 450 }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
+                                <PolarGrid stroke="var(--border-color)" />
+                                <PolarAngleAxis
+                                    dataKey="topic"
+                                    tick={{ fill: 'var(--text-primary)', fontSize: 13, fontWeight: 500 }}
+                                />
+                                <PolarRadiusAxis
+                                    angle={90}
+                                    domain={[0, 100]}
+                                    tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
+                                    axisLine={false}
+                                    tickCount={6}
+                                />
+                                <Radar
+                                    name="Proficiency"
+                                    dataKey="score"
+                                    stroke="var(--primary-color)"
+                                    fill="var(--primary-color)"
+                                    fillOpacity={0.4}
+                                />
+                                <Tooltip
+                                    contentStyle={{
+                                        background: 'var(--bg-primary)',
+                                        border: '1px solid var(--border-color)',
+                                        borderRadius: 'var(--radius-md)',
+                                        color: 'var(--text-primary)',
+                                        boxShadow: 'var(--shadow-lg)'
+                                    }}
+                                />
+                            </RadarChart>
+                        </ResponsiveContainer>
+                    </div>
                 </div>
             </div>
 

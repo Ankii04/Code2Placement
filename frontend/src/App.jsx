@@ -30,6 +30,7 @@ const SkillDashboard = lazy(() => import('./pages/SkillDashboard'));
 const MockInterview = lazy(() => import('./pages/MockInterview'));
 const ResumeAnalysis = lazy(() => import('./pages/ResumeAnalysis'));
 const Courses = lazy(() => import('./pages/Courses'));
+const ThreadDetail = lazy(() => import('./pages/ThreadDetail'));
 
 // Admin Pages (lazy-loaded)
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
@@ -122,6 +123,11 @@ const AppContent = () => {
                         <Route path="/forum" element={
                             <ProtectedRoute>
                                 <Forum />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/forum/:id" element={
+                            <ProtectedRoute>
+                                <ThreadDetail />
                             </ProtectedRoute>
                         } />
                         <Route path="/profile" element={

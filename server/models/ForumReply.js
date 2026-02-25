@@ -23,6 +23,11 @@ const forumReplySchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    parentReplyId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ForumReply',
+        default: null
+    },
     createdAt: {
         type: Date,
         default: Date.now
