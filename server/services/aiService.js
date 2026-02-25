@@ -24,7 +24,7 @@ class AIService {
     // Helper: call Gemini and return raw text
     async _generate(prompt) {
         const response = await this.client.models.generateContent({
-            model: 'gemini-2.0-flash',
+            model: 'gemini-2.5-flash',
             contents: prompt,
         });
         return response.text;
