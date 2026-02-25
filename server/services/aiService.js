@@ -52,12 +52,8 @@ Provide the following in valid JSON format:
 Be specific and actionable in your suggestions.`;
 
         try {
-            const response = await this.client.models.generateContent({
-                model: "gemini-2.5-flash",
-                contents: prompt
-            });
-
-            const text = response.text;
+            const response = await this.client.getGenerativeModel({ model: "gemini-1.5-flash" }).generateContent(prompt);
+            const text = response.response.text();
             const jsonMatch = text.match(/\{[\s\S]*\}/);
             if (jsonMatch) {
                 return JSON.parse(jsonMatch[0]);
@@ -71,34 +67,26 @@ Be specific and actionable in your suggestions.`;
     }
 
     // Mock Interview Question Generation
-    async generateInterviewQuestions(type, count = 10) {
+    async generateInterviewQuestions(type, count = 6) {
         this._checkConfiguration();
 
         const prompt = `Generate ${count} ${type} interview questions for a software engineering role.
-
-For each question, provide:
-1. The question
-2. Expected answer points
-3. Evaluation criteria
-
-Return in JSON format:
+Return ONLY a JSON object with this structure:
 {
   "questions": [
     {
       "question": "<question text>",
-      "expectedPoints": [<key points for good answer>],
-      "evaluationCriteria": "<what to look for in answer>"
+      "expectedPoints": ["point 1", "point 2"],
+      "evaluationCriteria": "criteria"
     }
   ]
 }`;
 
         try {
-            const response = await this.client.models.generateContent({
-                model: "gemini-2.5-flash",
-                contents: prompt
-            });
+            const model = this.client.getGenerativeModel({ model: "gemini-1.5-flash" });
+            const result = await model.generateContent(prompt);
+            const text = result.response.text();
 
-            const text = response.text;
             const jsonMatch = text.match(/\{[\s\S]*\}/);
             if (jsonMatch) {
                 return JSON.parse(jsonMatch[0]);
@@ -115,29 +103,27 @@ Return in JSON format:
     async evaluateAnswer(question, answer) {
         this._checkConfiguration();
 
-        const prompt = `Evaluate this interview answer:
+        const prompt = `Evaluate this interview answer concisely:
 
 Question: ${question}
 Answer: ${answer}
 
-Provide evaluation in JSON format:
+Provide exactly this JSON format:
 {
   "score": <number 0-10>,
   "confidence": <number 0-100>,
   "clarity": <number 0-100>,
   "accuracy": <number 0-100>,
   "communication": <number 0-100>,
-  "feedback": "<detailed feedback>",
-  "improvements": [<specific improvement suggestions>]
+  "feedback": "<concise feedback>",
+  "improvements": [<1-2 specific points>]
 }`;
 
         try {
-            const response = await this.client.models.generateContent({
-                model: "gemini-2.5-flash",
-                contents: prompt
-            });
+            const model = this.client.getGenerativeModel({ model: "gemini-1.5-flash" });
+            const result = await model.generateContent(prompt);
+            const text = result.response.text();
 
-            const text = response.text;
             const jsonMatch = text.match(/\{[\s\S]*\}/);
             if (jsonMatch) {
                 return JSON.parse(jsonMatch[0]);
@@ -210,12 +196,8 @@ Provide evaluation in JSON format:
 }`;
 
         try {
-            const response = await this.client.models.generateContent({
-                model: "gemini-2.5-flash",
-                contents: prompt
-            });
-
-            const text = response.text;
+            const response = await this.client.getGenerativeModel({ model: "gemini-1.5-flash" }).generateContent(prompt);
+            const text = response.response.text();
             const jsonMatch = text.match(/\{[\s\S]*\}/);
             if (jsonMatch) {
                 return JSON.parse(jsonMatch[0]);

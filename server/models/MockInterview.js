@@ -20,7 +20,11 @@ const mockInterviewSchema = new mongoose.Schema({
             min: 0,
             max: 10
         },
-        feedback: String
+        feedback: String,
+        confidence: Number,
+        clarity: Number,
+        accuracy: Number,
+        communication: Number
     }],
     scores: {
         confidence: {

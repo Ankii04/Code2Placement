@@ -16,8 +16,8 @@ app.post('/start', protect, async (req, res) => {
             return res.status(400).json({ message: 'Invalid interview type' });
         }
 
-        // Generate questions
-        const { questions } = await aiService.generateInterviewQuestions(type, 10);
+        // Generate questions - Reduced to 5 for speed and focus
+        const { questions } = await aiService.generateInterviewQuestions(type, 5);
 
         // Create interview session
         const interview = await MockInterview.create({
@@ -71,20 +71,36 @@ app.post('/:id/answer', protect, async (req, res) => {
             return res.status(400).json({ message: 'Invalid question index' });
         }
 
-        // Evaluate answer
+        // 🚀 OPTIMIZATION: Return next question immediately
+        // Start evaluation in background
         const question = interview.questions[questionIndex].question;
-        const evaluation = await aiService.evaluateAnswer(question, answer);
 
-        // Update interview
+        // Save the answer first so it's not lost
         interview.questions[questionIndex].userAnswer = answer;
-        interview.questions[questionIndex].aiEvaluation = evaluation.feedback;
-        interview.questions[questionIndex].score = evaluation.score;
-        interview.questions[questionIndex].feedback = evaluation.feedback;
-
         await interview.save();
 
+        // Fire evaluation in background
+        aiService.evaluateAnswer(question, answer).then(async (evaluation) => {
+            try {
+                // Fetch fresh copy to avoid version conflicts
+                const activeInterview = await MockInterview.findById(interview._id);
+                activeInterview.questions[questionIndex].aiEvaluation = evaluation.feedback;
+                activeInterview.questions[questionIndex].score = evaluation.score;
+                activeInterview.questions[questionIndex].feedback = evaluation.feedback;
+                activeInterview.questions[questionIndex].confidence = evaluation.confidence;
+                activeInterview.questions[questionIndex].clarity = evaluation.clarity;
+                activeInterview.questions[questionIndex].accuracy = evaluation.accuracy;
+                activeInterview.questions[questionIndex].communication = evaluation.communication;
+                await activeInterview.save();
+            } catch (err) {
+                console.error('Background Evaluation Save Error:', err);
+            }
+        }).catch(err => {
+            console.error('Background Evaluation Error:', err);
+        });
+
         res.json({
-            evaluation,
+            status: 'submitted',
             nextQuestion: questionIndex + 1 < interview.questions.length
                 ? interview.questions[questionIndex + 1].question
                 : null
@@ -100,7 +116,7 @@ app.post('/:id/answer', protect, async (req, res) => {
 // @access  Private
 app.post('/:id/complete', protect, async (req, res) => {
     try {
-        const interview = await MockInterview.findOne({
+        let interview = await MockInterview.findOne({
             _id: req.params.id,
             user: req.user._id
         });
@@ -109,36 +125,48 @@ app.post('/:id/complete', protect, async (req, res) => {
             return res.status(404).json({ message: 'Interview not found' });
         }
 
+        // 🚀 OPTIMIZATION: Wait for pending background evaluations (max 5s)
+        let attempts = 0;
+        let isFullyEvaluated = false;
+        while (attempts < 10) {
+            const pendingAnswers = interview.questions.filter(q => q.userAnswer && !q.aiEvaluation);
+            if (pendingAnswers.length === 0) {
+                isFullyEvaluated = true;
+                break;
+            }
+            console.log(`Waiting for ${pendingAnswers.length} pending evaluations... attempt ${attempts + 1}`);
+            await new Promise(r => setTimeout(r, 500));
+            interview = await MockInterview.findOne({ _id: req.params.id });
+            attempts++;
+        }
+
         // Calculate scores properly
         const totalScore = interview.questions.reduce((sum, q) => sum + (q.score || 0), 0);
-        const avgScore = totalScore / interview.questions.length;
+        const avgScore = totalScore / (interview.questions.filter(q => q.userAnswer).length || 1);
 
         // Calculate average for each metric from AI evaluations
-        let totalConfidence = 0, totalClarity = 0, totalAccuracy = 0, totalCommunication = 0;
-        let count = 0;
+        let metrics = { confidence: 0, clarity: 0, accuracy: 0, communication: 0 };
+        let evaluatiedCount = 0;
 
         interview.questions.forEach(q => {
             if (q.aiEvaluation) {
-                try {
-                    // AI evaluation might be a string, try to parse if needed
-                    const evaluation = typeof q.aiEvaluation === 'string' ? JSON.parse(q.aiEvaluation) : q.aiEvaluation;
-                    totalConfidence += evaluation.confidence || 0;
-                    totalClarity += evaluation.clarity || 0;
-                    totalAccuracy += evaluation.accuracy || 0;
-                    totalCommunication += evaluation.communication || 0;
-                    count++;
-                } catch (e) {
-                    // If parsing fails, use default values
-                }
+                metrics.confidence += q.confidence || 0;
+                metrics.clarity += q.clarity || 0;
+                metrics.accuracy += q.accuracy || 0;
+                metrics.communication += q.communication || 0;
+                evaluatiedCount++;
             }
         });
 
-        // Scores are already on 0-10 scale from AI, just round the averages
+        // Scores are on 0-10 or 0-100 scale from AI
         interview.scores.overall = Math.round(avgScore);
-        interview.scores.confidence = count > 0 ? Math.round(totalConfidence / count) : Math.round(avgScore);
-        interview.scores.clarity = count > 0 ? Math.round(totalClarity / count) : Math.round(avgScore);
-        interview.scores.accuracy = count > 0 ? Math.round(totalAccuracy / count) : Math.round(avgScore);
-        interview.scores.communication = count > 0 ? Math.round(totalCommunication / count) : Math.round(avgScore);
+        const calcMetric = (val) => evaluatiedCount > 0 ? Math.round(val / evaluatiedCount) : Math.round(avgScore * 10);
+
+        interview.scores.confidence = calcMetric(metrics.confidence);
+        interview.scores.clarity = calcMetric(metrics.clarity);
+        interview.scores.accuracy = calcMetric(metrics.accuracy);
+        interview.scores.communication = calcMetric(metrics.communication);
+
         interview.status = 'COMPLETED';
         interview.completedAt = new Date();
 
