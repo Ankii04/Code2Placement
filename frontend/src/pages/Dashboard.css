@@ -92,12 +92,33 @@
     margin: 0;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .stats-cards {
         grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-header h1 {
+        font-size: var(--text-3xl);
+    }
+
+    .stats-cards {
+        grid-template-columns: 1fr;
+        gap: var(--space-4);
+    }
+
+    .stat-card {
+        padding: var(--space-4);
     }
 
     .actions-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-header h1 {
+        font-size: var(--text-2xl);
     }
 }

@@ -433,47 +433,79 @@
    RESPONSIVE DESIGN
    ======================================== */
 
+@media (max-width: 1024px) {
+    .hero-title {
+        font-size: 3.5rem;
+    }
+
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
     .hero {
-        min-height: 80vh;
-        padding: var(--space-12) 0;
+        min-height: auto;
+        padding: 6rem 0;
     }
 
     .hero-content {
-        padding: var(--space-4);
+        padding: 0 1.5rem;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
     }
 
     .hero-actions {
         flex-direction: column;
-        gap: var(--space-4);
+        gap: 1rem;
+        padding: 0 2rem;
     }
 
     .hero-actions .btn {
         width: 100%;
-        max-width: 300px;
+        max-width: none;
     }
 
     .features-grid {
         grid-template-columns: 1fr;
-        gap: var(--space-6);
+        gap: 1.5rem;
     }
 
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-6);
+        gap: 2rem;
     }
 
     .feature-card {
-        padding: var(--space-8);
+        padding: 2rem;
+    }
+
+    .cta-content {
+        padding: 3rem 1.5rem;
+    }
+
+    .cta-content h2 {
+        font-size: 2rem;
     }
 }
 
 @media (max-width: 480px) {
-    .stats-grid {
-        grid-template-columns: 1fr;
+    .hero {
+        padding: 4rem 0;
     }
 
-    .cta-content {
-        padding: var(--space-10);
+    .hero-title {
+        font-size: 2.2rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
     }
 }

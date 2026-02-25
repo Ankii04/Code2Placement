@@ -44,7 +44,7 @@ const Navbar = () => {
                     <div className={`navbar-menu ${mobileMenuOpen ? 'active' : ''}`}>
                         {isAuthenticated ? (
                             <>
-                                <Link to="/dashboard" className="nav-link">
+                                <Link to="/dashboard" className="nav-link" onClick={() => setMobileMenuOpen(false)}>
                                     <span className="nav-icon">📊</span>
                                     <span>Dashboard</span>
                                 </Link>
@@ -53,25 +53,28 @@ const Navbar = () => {
                                 <div
                                     className="nav-dropdown"
                                     ref={practiceDropdownRef}
-                                    onMouseEnter={() => setPracticeDropdownOpen(true)}
-                                    onMouseLeave={() => setPracticeDropdownOpen(false)}
+                                    onMouseEnter={() => !window.matchMedia('(max-width: 768px)').matches && setPracticeDropdownOpen(true)}
+                                    onMouseLeave={() => !window.matchMedia('(max-width: 768px)').matches && setPracticeDropdownOpen(false)}
                                 >
-                                    <button className="nav-link dropdown-trigger">
+                                    <button
+                                        className="nav-link dropdown-trigger"
+                                        onClick={() => window.matchMedia('(max-width: 768px)').matches && setPracticeDropdownOpen(!practiceDropdownOpen)}
+                                    >
                                         <span className="nav-icon">💻</span>
                                         <span>Practice</span>
                                         <span className="dropdown-arrow">{practiceDropdownOpen ? '▲' : '▼'}</span>
                                     </button>
                                     {practiceDropdownOpen && (
                                         <div className="nav-dropdown-menu active">
-                                            <Link to="/topics" className="dropdown-item">
+                                            <Link to="/topics" className="dropdown-item" onClick={() => { setMobileMenuOpen(false); setPracticeDropdownOpen(false); }}>
                                                 <span className="item-icon">📚</span>
                                                 DSA Topics
                                             </Link>
-                                            <Link to="/questions" className="dropdown-item">
+                                            <Link to="/questions" className="dropdown-item" onClick={() => { setMobileMenuOpen(false); setPracticeDropdownOpen(false); }}>
                                                 <span className="item-icon">❓</span>
                                                 Questions
                                             </Link>
-                                            <Link to="/interview-qa" className="dropdown-item">
+                                            <Link to="/interview-qa" className="dropdown-item" onClick={() => { setMobileMenuOpen(false); setPracticeDropdownOpen(false); }}>
                                                 <span className="item-icon">💬</span>
                                                 Interview Q&A
                                             </Link>
@@ -83,25 +86,28 @@ const Navbar = () => {
                                 <div
                                     className="nav-dropdown"
                                     ref={toolsDropdownRef}
-                                    onMouseEnter={() => setToolsDropdownOpen(true)}
-                                    onMouseLeave={() => setToolsDropdownOpen(false)}
+                                    onMouseEnter={() => !window.matchMedia('(max-width: 768px)').matches && setToolsDropdownOpen(true)}
+                                    onMouseLeave={() => !window.matchMedia('(max-width: 768px)').matches && setToolsDropdownOpen(false)}
                                 >
-                                    <button className="nav-link dropdown-trigger">
+                                    <button
+                                        className="nav-link dropdown-trigger"
+                                        onClick={() => window.matchMedia('(max-width: 768px)').matches && setToolsDropdownOpen(!toolsDropdownOpen)}
+                                    >
                                         <span className="nav-icon">🛠️</span>
                                         <span>Tools</span>
                                         <span className="dropdown-arrow">{toolsDropdownOpen ? '▲' : '▼'}</span>
                                     </button>
                                     {toolsDropdownOpen && (
                                         <div className="nav-dropdown-menu active">
-                                            <Link to="/skill-dashboard" className="dropdown-item">
+                                            <Link to="/skill-dashboard" className="dropdown-item" onClick={() => { setMobileMenuOpen(false); setToolsDropdownOpen(false); }}>
                                                 <span className="item-icon">📈</span>
                                                 Skill Dashboard
                                             </Link>
-                                            <Link to="/mock-interview" className="dropdown-item">
+                                            <Link to="/mock-interview" className="dropdown-item" onClick={() => { setMobileMenuOpen(false); setToolsDropdownOpen(false); }}>
                                                 <span className="item-icon">🎤</span>
                                                 Mock Interview
                                             </Link>
-                                            <Link to="/resume-analysis" className="dropdown-item">
+                                            <Link to="/resume-analysis" className="dropdown-item" onClick={() => { setMobileMenuOpen(false); setToolsDropdownOpen(false); }}>
                                                 <span className="item-icon">📄</span>
                                                 Resume Analysis
                                             </Link>
@@ -109,17 +115,17 @@ const Navbar = () => {
                                     )}
                                 </div>
 
-                                <Link to="/courses" className="nav-link">
+                                <Link to="/courses" className="nav-link" onClick={() => setMobileMenuOpen(false)}>
                                     <span className="nav-icon">🎓</span>
                                     <span>Courses</span>
                                 </Link>
-                                <Link to="/forum" className="nav-link">
+                                <Link to="/forum" className="nav-link" onClick={() => setMobileMenuOpen(false)}>
                                     <span className="nav-icon">👥</span>
                                     <span>Forum</span>
                                 </Link>
 
                                 {user?.role === 'ADMIN' && (
-                                    <Link to="/admin" className="nav-link admin-link">
+                                    <Link to="/admin" className="nav-link admin-link" onClick={() => setMobileMenuOpen(false)}>
                                         <span className="nav-icon">🛡️</span>
                                         <span>Admin</span>
                                     </Link>
@@ -127,8 +133,8 @@ const Navbar = () => {
                             </>
                         ) : (
                             <>
-                                <Link to="/roadmaps" className="nav-link">Roadmaps</Link>
-                                <Link to="/resources" className="nav-link">Resources</Link>
+                                <Link to="/roadmaps" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Roadmaps</Link>
+                                <Link to="/resources" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Resources</Link>
                             </>
                         )}
                     </div>

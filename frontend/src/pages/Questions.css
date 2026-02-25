@@ -333,11 +333,29 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+    .title-col {
+        min-width: 250px;
+    }
+}
+
 @media (max-width: 768px) {
     .questions-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;
+    }
+
+    .questions-header h1 {
+        font-size: 2.2rem;
+    }
+
+    .progress-card {
+        padding: 1rem;
+    }
+
+    .progress-bar-container {
+        height: 1.5rem;
     }
 
     .filter-toggle-btn {
@@ -352,7 +370,7 @@
         padding: 1rem 1.25rem;
     }
 
-    .topic-info {
+    .topic-info-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.5rem;
@@ -367,7 +385,15 @@
     }
 
     .questions-table {
-        font-size: 0.9rem;
+        margin: 0 -1rem;
+        /* Full bleed on mobile */
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+    }
+
+    .questions-table table {
+        font-size: 0.85rem;
     }
 
     .questions-table th,
@@ -375,23 +401,52 @@
         padding: 0.75rem 0.5rem;
     }
 
+    .checkbox-col {
+        width: 40px;
+    }
+
+    .number-col {
+        width: 40px;
+    }
+
     .title-col {
-        min-width: 200px;
+        min-width: 180px;
+    }
+
+    .difficulty-col {
+        width: 100px;
     }
 
     .links-col {
+        width: 80px;
+    }
+
+    .action-col {
         width: 100px;
     }
 
     .solution-links {
-        flex-direction: column;
-        gap: 0.25rem;
+        justify-content: center;
     }
 
-    .solution-link {
-        width: 28px;
-        height: 28px;
-        font-size: 1rem;
+    .btn-solve {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .questions-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .progress-stats {
+        font-size: 0.9rem;
+    }
+
+    .stat-label {
+        display: none;
+        /* Hide label to save space in small progress stats */
     }
 }
 

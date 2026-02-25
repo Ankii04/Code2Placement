@@ -503,18 +503,113 @@ a:hover {
 }
 
 /* Responsive Utilities */
+@media (max-width: 1280px) {
+  .container {
+    padding: 0 var(--space-6);
+  }
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 var(--space-5);
+  }
+}
+
 @media (max-width: 768px) {
   html {
     font-size: 14px;
   }
 
   .container {
-    padding: 0 var(--space-3);
+    padding: 0 var(--space-4);
+  }
+
+  h1 {
+    font-size: var(--text-4xl);
+  }
+
+  h2 {
+    font-size: var(--text-3xl);
+  }
+
+  h3 {
+    font-size: var(--text-2xl);
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+
+  .radio-group {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  /* Touch-friendly tap targets */
+  .btn {
+    min-height: 44px;
   }
 }
 
 @media (max-width: 480px) {
   html {
     font-size: 13px;
+  }
+
+  .container {
+    padding: 0 var(--space-3);
+  }
+
+  h1 {
+    font-size: var(--text-3xl);
+  }
+
+  h2 {
+    font-size: var(--text-2xl);
+  }
+
+  h3 {
+    font-size: var(--text-xl);
+  }
+
+  .glass-card {
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+  }
+}
+
+/* Responsive visibility helpers */
+.hide-mobile {
+  display: block;
+}
+
+.show-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .hide-mobile {
+    display: none !important;
+  }
+
+  .show-mobile {
+    display: block !important;
+  }
+}
+
+/* Responsive grid helpers */
+.grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-6);
+}
+
+@media (max-width: 480px) {
+  .grid-auto {
+    grid-template-columns: 1fr;
   }
 }

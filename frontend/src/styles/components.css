@@ -266,6 +266,34 @@
     justify-content: flex-end;
 }
 
+@media (max-width: 768px) {
+    .modal {
+        width: 95%;
+        margin: var(--space-2);
+        max-height: 85vh;
+    }
+
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        padding: var(--space-4);
+    }
+
+    .card {
+        padding: var(--space-4);
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-footer {
+        flex-direction: column;
+    }
+
+    .modal-footer .btn {
+        width: 100%;
+    }
+}
+
 /* Loading Spinner */
 .spinner {
     width: 40px;
