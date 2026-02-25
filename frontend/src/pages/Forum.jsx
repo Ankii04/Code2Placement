@@ -21,7 +21,11 @@ const Forum = () => {
     const categories = ['All', 'DSA', 'Interview', 'Career', 'Technical', 'General', 'Other'];
 
     useEffect(() => {
-        fetchThreads();
+        const delayDebounceFn = setTimeout(() => {
+            fetchThreads();
+        }, 300);
+
+        return () => clearTimeout(delayDebounceFn);
     }, [selectedCategory, searchQuery]);
 
     const fetchThreads = async () => {
@@ -80,14 +84,6 @@ const Forum = () => {
         return threadDate.toLocaleDateString();
     };
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center" style={{ minHeight: '60vh' }}>
-                <div className="spinner"></div>
-            </div>
-        );
-    }
-
     return (
         <div className="forum-page">
             <div className="container">
@@ -125,7 +121,11 @@ const Forum = () => {
 
                 {/* Threads List */}
                 <div className="threads-list">
-                    {threads.length === 0 ? (
+                    {loading ? (
+                        <div className="flex items-center justify-center" style={{ minHeight: '20vh' }}>
+                            <div className="spinner"></div>
+                        </div>
+                    ) : threads.length === 0 ? (
                         <div className="glass-card" style={{ padding: '3rem', textAlign: 'center' }}>
                             <p style={{ fontSize: '1.2rem', opacity: 0.7 }}>No threads found. Be the first to start a discussion!</p>
                         </div>
